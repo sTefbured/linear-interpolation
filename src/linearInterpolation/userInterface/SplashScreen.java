@@ -1,57 +1,56 @@
 package linearInterpolation.userInterface;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
-public class SplashScreen extends JFrame {
+public class SplashScreen extends JWindow {
     private JButton nextButton;
     private JButton exitButton;
+    private BufferedImage splashScreenImage;
 
     public SplashScreen() {
-        Dimension screenSize = getToolkit().getScreenSize();
-        setSize(screenSize.width * 3 / 7, screenSize.height / 2);
-        setLocationRelativeTo(null);
+        try {
+            splashScreenImage = ImageIO.read(new File("res/splashscreen.jpg"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         setLayout(new GridBagLayout());
-        addTextPanel();
+
+        addImageLabel();
         initializeNextButton();
         initializeExitButton();
         addButtons();
 
-        add(nextButton);
-        add(exitButton);
-        addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    dispose();
-                }
-            }
-        });
-        setUndecorated(true);
+        pack();
+        setLocationRelativeTo(null);
         setVisible(true);
     }
 
-    //TODO: implement
-    private void addTextPanel() {
-
+    private void addImageLabel() {
+        JLabel label = new JLabel(new ImageIcon(splashScreenImage));
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = 0;
         constraints.gridy = 0;
+        constraints.weightx = 0.0;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.gridwidth = 2;
-        constraints.gridheight = 2;
-        //add(textPanel, constraints);
+        getContentPane().add(label, constraints);
     }
 
     private void addButtons() {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = 0;
         constraints.gridy = 1;
-        add(nextButton, constraints);
-        constraints.gridx = 2;
-        constraints.gridy = 1;
-        add(exitButton, constraints);
+        constraints.weightx = 0.5;
+        constraints.ipady = 40;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        getContentPane().add(nextButton, constraints);
+        constraints.gridx = 1;
+        getContentPane().add(exitButton, constraints);
     }
 
     private void initializeNextButton() {
