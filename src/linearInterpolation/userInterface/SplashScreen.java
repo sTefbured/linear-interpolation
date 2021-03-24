@@ -16,15 +16,13 @@ public class SplashScreen extends JWindow {
         try {
             splashScreenImage = ImageIO.read(new File("res/splashscreen.jpg"));
         } catch (IOException e) {
-            e.printStackTrace();
+            splashScreenImage = new BufferedImage(800, 500, BufferedImage.TYPE_INT_ARGB);
         }
         setLayout(new GridBagLayout());
-
-        addImageLabel();
         initializeNextButton();
         initializeExitButton();
+        addImageLabel();
         addButtons();
-
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
@@ -35,8 +33,6 @@ public class SplashScreen extends JWindow {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = 0;
         constraints.gridy = 0;
-        constraints.weightx = 0.0;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.gridwidth = 2;
         getContentPane().add(label, constraints);
     }
