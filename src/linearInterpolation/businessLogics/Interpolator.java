@@ -1,33 +1,34 @@
 package linearInterpolation.businessLogics;
 
-public class Interpolator {
-    private final double[] timeStamps;
-    private final double[] temperatures;
+public abstract class Interpolator {
+    private final double[] xValues;
+    private final double[] yValues;
     private double coefficientA;
     private double coefficientB;
 
-    public Interpolator(double[] timeStamps, double[] temperatures) {
-        this.timeStamps = timeStamps;
-        this.temperatures = temperatures;
+    public Interpolator(double[] xValues, double[] yValues) {
+        this.xValues = xValues;
+        this.yValues = yValues;
         initializeCoefficients();
     }
 
-    private void initializeCoefficients() {
-        double sumTimeStamps = 0;
-        double sumTemperatures = 0;
-        double sumTimeStampsSquared = 0;
-        double sumXY = 0;
-        for (int i = 0; i < timeStamps.length; i++) {
-            sumTimeStamps += timeStamps[i];
-            sumTemperatures += temperatures[i];
-            sumTimeStampsSquared += timeStamps[i] * timeStamps[i];
-            sumXY += timeStamps[i] * temperatures[i];
-        }
-        coefficientA = (sumXY * timeStamps.length - sumTimeStamps * sumTemperatures) / (timeStamps.length * sumTimeStampsSquared - sumTimeStamps * sumTimeStamps);
-        coefficientB = (sumTemperatures - coefficientA * sumTimeStamps) / timeStamps.length;
+    protected abstract void initializeCoefficients();
+
+    public abstract double calculateTemperature(double timeStamp);
+
+    public double[] getXValues() {
+        return xValues;
     }
 
-    public double calculateTemperature(double timeStamp) {
-        return coefficientA * timeStamp + coefficientB;
+    public double[] getYValues() {
+        return yValues;
+    }
+
+    public double getCoefficientA() {
+        return coefficientA;
+    }
+
+    public double getCoefficientB() {
+        return coefficientB;
     }
 }
