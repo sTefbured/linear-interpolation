@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class SplashScreen extends JWindow {
+public class SplashScreen extends JFrame {
     private JButton nextButton;
     private JButton exitButton;
     private BufferedImage splashScreenImage;
@@ -19,6 +19,8 @@ public class SplashScreen extends JWindow {
             splashScreenImage = new BufferedImage(800, 500, BufferedImage.TYPE_INT_ARGB);
         }
         setLayout(new GridBagLayout());
+        setUndecorated(true);
+        addImageLabel();
         initializeNextButton();
         initializeExitButton();
         addImageLabel();
@@ -59,8 +61,6 @@ public class SplashScreen extends JWindow {
 
     private void initializeExitButton() {
         exitButton = new JButton("Выход");
-        exitButton.addActionListener(e -> {
-            System.exit(0);
-        });
+        exitButton.addActionListener(e -> System.exit(0));
     }
 }
