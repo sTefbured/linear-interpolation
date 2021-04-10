@@ -24,6 +24,14 @@ public abstract class Interpolator {
         return yValues;
     }
 
+    protected void setCoefficientA(double coefficientA) {
+        this.coefficientA = coefficientA;
+    }
+
+    protected void setCoefficientB(double coefficientB) {
+        this.coefficientB = coefficientB;
+    }
+
     public double getCoefficientA() {
         return coefficientA;
     }
