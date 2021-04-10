@@ -8,9 +8,12 @@ import java.io.File;
 import java.io.IOException;
 
 public class SplashScreen extends JFrame {
+    private final int DELAY_MILLISECONDS = 60000;
+
     private JButton nextButton;
     private JButton exitButton;
     private BufferedImage splashScreenImage;
+    private final Timer timer;
 
     public SplashScreen() {
         try {
@@ -28,6 +31,8 @@ public class SplashScreen extends JFrame {
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+        timer = new Timer(DELAY_MILLISECONDS, e -> System.exit(0));
+        timer.start();
     }
 
     private void addImageLabel() {
@@ -55,6 +60,7 @@ public class SplashScreen extends JFrame {
         nextButton = new JButton("Далее");
         nextButton.addActionListener(e -> {
             new MainFrame();
+            timer.stop();
             dispose();
         });
     }
