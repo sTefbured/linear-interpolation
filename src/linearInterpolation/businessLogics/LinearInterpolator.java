@@ -1,5 +1,7 @@
 package linearInterpolation.businessLogics;
 
+import linearInterpolation.businessLogics.utils.DoubleStreamMapper;
+
 import java.util.Arrays;
 import java.util.stream.DoubleStream;
 
@@ -15,18 +17,10 @@ public class LinearInterpolator extends Interpolator {
         int valuesCount = getXValues().length;
         double xSum = xStream.sum();
         double ySum = yStream.sum();
-        double squaredXSum = Arrays.stream(getXValues()).map(x -> x * x).sum();
-        double xYSum = multiply(getXValues(), getYValues());
+        double squaredXSum = xStream.map(x -> x * x).sum();
+        double xYSum = DoubleStreamMapper.crossMap(xStream, yStream, (x, y) -> x * y).sum();
         setCoefficientA((valuesCount * xYSum - xSum * ySum) / (valuesCount * squaredXSum - xSum * xSum));
         setCoefficientB((ySum - getCoefficientA() * xSum) / valuesCount);
-    }
-
-    private double multiply(double[] array1, double[] array2){
-        double result = 0;
-        for (int i = 0; i < array1.length; i++) {
-            result += array1[i] * array2[i];
-        }
-        return result;
     }
 
     @Override
