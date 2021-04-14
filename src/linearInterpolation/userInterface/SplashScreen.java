@@ -11,24 +11,29 @@ public class SplashScreen extends JFrame {
     private JButton nextButton;
     private JButton exitButton;
     private BufferedImage splashScreenImage;
+    private final Timer timer;
 
     public SplashScreen() {
         try {
             splashScreenImage = ImageIO.read(new File("res/splashscreen.jpg"));
         } catch (IOException e) {
-            e.printStackTrace();
+            splashScreenImage = new BufferedImage(800, 600, BufferedImage.TYPE_INT_ARGB);
         }
-        setLayout(new GridBagLayout());
+        int delayMilliseconds = 60000;
+        timer = new Timer(delayMilliseconds, e -> System.exit(0));
 
+        setLayout(new GridBagLayout());
         setUndecorated(true);
         addImageLabel();
         initializeNextButton();
         initializeExitButton();
+        addImageLabel();
         addButtons();
-
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+
+        timer.start();
     }
 
     private void addImageLabel() {
@@ -36,8 +41,6 @@ public class SplashScreen extends JFrame {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = 0;
         constraints.gridy = 0;
-        constraints.weightx = 0.0;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.gridwidth = 2;
         getContentPane().add(label, constraints);
     }
@@ -58,6 +61,7 @@ public class SplashScreen extends JFrame {
         nextButton = new JButton("Далее");
         nextButton.addActionListener(e -> {
             new MainFrame();
+            timer.stop();
             dispose();
         });
     }
