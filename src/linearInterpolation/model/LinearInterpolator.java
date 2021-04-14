@@ -1,6 +1,6 @@
-package linearInterpolation.businessLogics;
+package linearInterpolation.model;
 
-import linearInterpolation.businessLogics.utils.DoubleStreamMapper;
+import linearInterpolation.utils.DoubleStreamMapper;
 
 import java.util.Arrays;
 import java.util.stream.DoubleStream;

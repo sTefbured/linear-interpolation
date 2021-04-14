@@ -1,4 +1,4 @@
-package linearInterpolation.businessLogics.utils;
+package linearInterpolation.utils;
 
 import java.util.Arrays;
 import java.util.function.DoubleBinaryOperator;

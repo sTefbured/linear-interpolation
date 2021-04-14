@@ -1,4 +1,4 @@
-package linearInterpolation.userInterface.panels;
+package linearInterpolation.view.panels;
 
 import javax.swing.*;
 import java.awt.*;
