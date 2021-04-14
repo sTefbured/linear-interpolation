@@ -8,8 +8,6 @@ import java.io.File;
 import java.io.IOException;
 
 public class SplashScreen extends JFrame {
-    private final int DELAY_MILLISECONDS = 60000;
-
     private JButton nextButton;
     private JButton exitButton;
     private BufferedImage splashScreenImage;
@@ -19,8 +17,11 @@ public class SplashScreen extends JFrame {
         try {
             splashScreenImage = ImageIO.read(new File("res/splashscreen.jpg"));
         } catch (IOException e) {
-            splashScreenImage = new BufferedImage(800, 500, BufferedImage.TYPE_INT_ARGB);
+            splashScreenImage = new BufferedImage(800, 600, BufferedImage.TYPE_INT_ARGB);
         }
+        int delayMilliseconds = 60000;
+        timer = new Timer(delayMilliseconds, e -> System.exit(0));
+
         setLayout(new GridBagLayout());
         setUndecorated(true);
         addImageLabel();
@@ -31,7 +32,7 @@ public class SplashScreen extends JFrame {
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
-        timer = new Timer(DELAY_MILLISECONDS, e -> System.exit(0));
+
         timer.start();
     }
 
