@@ -1,6 +1,6 @@
 package linearInterpolation;
 
-import linearInterpolation.view.SplashScreen;
+import linearInterpolation.userInterface.SplashScreen;
 
 import javax.swing.*;
 

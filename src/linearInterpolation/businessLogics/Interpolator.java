@@ -1,4 +1,4 @@
-package linearInterpolation.model;
+package linearInterpolation.businessLogics;
 
 public abstract class Interpolator {
     private final double[] xValues;

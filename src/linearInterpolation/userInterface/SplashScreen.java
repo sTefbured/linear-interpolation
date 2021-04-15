@@ -1,4 +1,4 @@
-package linearInterpolation.view;
+package linearInterpolation.userInterface;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
