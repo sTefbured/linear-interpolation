@@ -4,8 +4,8 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class SplashScreen extends JFrame {
     private JButton nextButton;
@@ -13,11 +13,16 @@ public class SplashScreen extends JFrame {
     private BufferedImage splashScreenImage;
     private final Timer timer;
 
+    @SuppressWarnings("ConstantConditions")
     public SplashScreen() {
+        ClassLoader classLoader = getClass().getClassLoader();
         try {
-            splashScreenImage = ImageIO.read(new File("res/splashscreen.jpg"));
-        } catch (IOException e) {
-            splashScreenImage = new BufferedImage(800, 600, BufferedImage.TYPE_INT_ARGB);
+            InputStream resourceStream = classLoader
+                    .getResourceAsStream("splashscreen.jpg");
+            splashScreenImage = ImageIO.read(resourceStream);
+        } catch (IOException | IllegalArgumentException e) {
+            splashScreenImage = new BufferedImage(800, 600,
+                    BufferedImage.TYPE_INT_ARGB);
         }
         int delayMilliseconds = 60000;
         timer = new Timer(delayMilliseconds, e -> System.exit(0));

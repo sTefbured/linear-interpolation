@@ -1,12 +1,15 @@
-package linearInterpolation.businessLogics;
+package linearInterpolation.model;
 
-public abstract class Interpolator {
-    private final double[] xValues;
-    private final double[] yValues;
+import java.util.Collection;
+
+public abstract class Interpolation {
+    private Collection<Double> xValues;
+    private Collection<Double> yValues;
     private double coefficientA;
     private double coefficientB;
 
-    public Interpolator(double[] xValues, double[] yValues) {
+    public void initialize(Collection<Double> xValues,
+                           Collection<Double> yValues) {
         this.xValues = xValues;
         this.yValues = yValues;
         initializeCoefficients();
@@ -16,11 +19,11 @@ public abstract class Interpolator {
 
     public abstract double calculateTemperature(double timeStamp);
 
-    public double[] getXValues() {
+    public Collection<Double> getXValues() {
         return xValues;
     }
 
-    public double[] getYValues() {
+    public Collection<Double> getYValues() {
         return yValues;
     }
 

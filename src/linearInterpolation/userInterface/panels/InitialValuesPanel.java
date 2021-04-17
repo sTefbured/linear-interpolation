@@ -1,5 +1,8 @@
 package linearInterpolation.userInterface.panels;
 
+import linearInterpolation.model.Interpolation;
+import linearInterpolation.model.LinearInterpolation;
+
 import javax.swing.*;
 import java.awt.*;
 import java.text.NumberFormat;
@@ -9,18 +12,21 @@ import java.util.Collection;
 import static javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER;
 import static javax.swing.JScrollPane.VERTICAL_SCROLLBAR_ALWAYS;
 
-public class ValuesInputPanel extends JPanel {
+public class InitialValuesPanel extends JPanel {
     public final int defaultValuesCount = 5;
     private final NumberFormat numberFormat = NumberFormat.getNumberInstance();
     private final NumberFormat intFormat = NumberFormat.getIntegerInstance();
 
     private ArrayList<JTextField> xValuesFields;
     private ArrayList<JTextField> yValuesFields;
+    private Interpolation interpolation;
+
     private JPanel valuesPanel;
     private JFormattedTextField valuesCountField;
     private final JPanel westBorderPanel;
 
-    public ValuesInputPanel() {
+    public InitialValuesPanel(Interpolation interpolation) {
+        this.interpolation = interpolation;
         setBorder(BorderFactory.createTitledBorder("Input values"));
         setLayout(new BorderLayout());
         westBorderPanel = new JPanel();
@@ -46,7 +52,6 @@ public class ValuesInputPanel extends JPanel {
     }
 
     private void updateValuesPanel() {
-        westBorderPanel.remove(valuesPanel);
         int count;
         try {
             count = intFormat.parse(valuesCountField.getText()).intValue();
@@ -54,6 +59,7 @@ public class ValuesInputPanel extends JPanel {
             showNumberFormatErrorDialog();
             return;
         }
+        westBorderPanel.remove(valuesPanel);
         valuesPanel = createValuesPanel(count);
         westBorderPanel.add(valuesPanel);
         valuesPanel.revalidate();
@@ -69,8 +75,8 @@ public class ValuesInputPanel extends JPanel {
 
         JPanel xLabelPanel = new JPanel();
         JPanel yLabelPanel = new JPanel();
-        xLabelPanel.add(new JLabel("X"));
-        yLabelPanel.add(new JLabel("Y"));
+        xLabelPanel.add(new JLabel("Time"));
+        yLabelPanel.add(new JLabel("Temperature"));
         fieldsPanel.add(xLabelPanel);
         fieldsPanel.add(yLabelPanel);
         xValuesFields = new ArrayList<>(valuesCount);
@@ -90,11 +96,19 @@ public class ValuesInputPanel extends JPanel {
             fieldsPanel.add(xPanel);
             fieldsPanel.add(yPanel);
         }
-        JButton calculateButton = new JButton("Calculate");
-//        calculateButton.addActionListener(e -> new LinearInterpolator());
+        JButton initializeButton = new JButton("Initialize");
+        initializeButton.addActionListener(e -> initializeInterpolation());
         valuesPanel.add(scrollPane);
-        valuesPanel.add(calculateButton);
+        valuesPanel.add(initializeButton);
         return valuesPanel;
+    }
+
+    private void initializeInterpolation() {
+        Collection<Double> timeStamps = parseFields(xValuesFields);
+        Collection<Double> temperatures = parseFields(yValuesFields);
+        interpolation.initialize(timeStamps, temperatures);
+        getParent().repaint();
+        System.out.println(interpolation.calculateTemperature(3.82));
     }
 
     private Collection<Double> parseFields(Collection<JTextField> fields) {

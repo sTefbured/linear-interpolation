@@ -1,6 +1,9 @@
 package linearInterpolation.userInterface;
 
-import linearInterpolation.userInterface.panels.MainPanel;
+import linearInterpolation.model.Interpolation;
+import linearInterpolation.model.LinearInterpolation;
+import linearInterpolation.userInterface.panels.GraphPanel;
+import linearInterpolation.userInterface.panels.InitialValuesPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,7 +22,9 @@ public class MainFrame extends JFrame {
     // TODO: think about different naming
     private void addComponents() {
         setLayout(new GridLayout(1, 2));
-        add(new MainPanel());
+        Interpolation interpolation = new LinearInterpolation();
+        add(new InitialValuesPanel(interpolation));
+        add(new GraphPanel(interpolation));
     }
 
     // TODO: add more menu items
