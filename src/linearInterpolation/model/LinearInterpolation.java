@@ -17,11 +17,10 @@ public class LinearInterpolation extends Interpolation {
                 yValues, (x, y) -> x * y).sum();
         setCoefficientA((valuesCount * xYSum - xSum * ySum) / (valuesCount * squaredXSum - xSum * xSum));
         setCoefficientB((ySum - getCoefficientA() * xSum) / valuesCount);
-        System.out.println(getCoefficientA() + " " + getCoefficientB());
     }
 
     @Override
-    public double calculateTemperature(double timeStamp) {
+    public double calculateFunctionValue(double timeStamp) {
         return getCoefficientA() * timeStamp + getCoefficientB();
     }
 }

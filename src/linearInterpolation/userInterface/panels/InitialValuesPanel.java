@@ -1,7 +1,6 @@
 package linearInterpolation.userInterface.panels;
 
 import linearInterpolation.model.Interpolation;
-import linearInterpolation.model.LinearInterpolation;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,6 +8,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+
 import static javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER;
 import static javax.swing.JScrollPane.VERTICAL_SCROLLBAR_ALWAYS;
 
@@ -104,27 +104,28 @@ public class InitialValuesPanel extends JPanel {
     }
 
     private void initializeInterpolation() {
-        Collection<Double> timeStamps = parseFields(xValuesFields);
-        Collection<Double> temperatures = parseFields(yValuesFields);
-        interpolation.initialize(timeStamps, temperatures);
-        getParent().repaint();
-        System.out.println(interpolation.calculateTemperature(3.82));
+        try {
+            Collection<Double> timeStamps = parseFields(xValuesFields);
+            Collection<Double> temperatures = parseFields(yValuesFields);
+            interpolation.initialize(timeStamps, temperatures);
+            getParent().repaint();
+        } catch (ParseException e) {
+            showNumberFormatErrorDialog();
+        }
     }
 
-    private Collection<Double> parseFields(Collection<JTextField> fields) {
+    private Collection<Double> parseFields(Collection<JTextField> fields)
+            throws ParseException {
         Collection<Double> values = new ArrayList<>(fields.size());
-        fields.forEach(f -> values.add(parseField(f)));
+        for (JTextField f : fields) {
+            values.add(parseField(f));
+        }
         return values;
     }
 
-    private Double parseField(JTextField field) {
+    private Double parseField(JTextField field) throws ParseException {
         String text = field.getText();
-        try {
-            return numberFormat.parse(text).doubleValue();
-        } catch (ParseException e) {
-            showNumberFormatErrorDialog();
-            return 0.0;
-        }
+        return numberFormat.parse(text).doubleValue();
     }
 
     private void showNumberFormatErrorDialog() {

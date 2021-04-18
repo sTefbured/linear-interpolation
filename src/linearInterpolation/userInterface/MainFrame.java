@@ -9,6 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MainFrame extends JFrame {
+    private JPanel graphPanel;
+
     public MainFrame() {
         super("Linear interpolation coursework");
         addComponents();
@@ -24,7 +26,8 @@ public class MainFrame extends JFrame {
         setLayout(new GridLayout(1, 2));
         Interpolation interpolation = new LinearInterpolation();
         add(new InitialValuesPanel(interpolation));
-        add(new GraphPanel(interpolation));
+        graphPanel = new GraphPanel(interpolation);
+        add(graphPanel);
     }
 
     // TODO: add more menu items

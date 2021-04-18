@@ -10,6 +10,7 @@ public final class DoubleCollectionMapper {
     // Don't let anyone instantiate this class
     private DoubleCollectionMapper(){}
 
+    // TODO: GET RID OF THAT
     public static DoubleStream crossMap(Collection<Double> first,
                                         Collection<Double> second,
                                         DoubleBinaryOperator mapper) {

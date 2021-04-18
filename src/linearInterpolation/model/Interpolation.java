@@ -1,8 +1,9 @@
 package linearInterpolation.model;
 
 import java.util.Collection;
+import java.util.Observable;
 
-public abstract class Interpolation {
+public abstract class Interpolation extends Observable {
     private Collection<Double> xValues;
     private Collection<Double> yValues;
     private double coefficientA;
@@ -13,11 +14,13 @@ public abstract class Interpolation {
         this.xValues = xValues;
         this.yValues = yValues;
         initializeCoefficients();
+        setChanged();
+        notifyObservers();
     }
 
     protected abstract void initializeCoefficients();
 
-    public abstract double calculateTemperature(double timeStamp);
+    public abstract double calculateFunctionValue(double xValue);
 
     public Collection<Double> getXValues() {
         return xValues;
