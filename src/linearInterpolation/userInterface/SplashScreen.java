@@ -10,6 +10,8 @@ import java.io.InputStream;
 public class SplashScreen extends JFrame {
     private JButton nextButton;
     private JButton exitButton;
+
+    // TODO: remove image
     private BufferedImage splashScreenImage;
     private final Timer timer;
 

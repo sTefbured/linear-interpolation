@@ -1,11 +1,17 @@
 package linearInterpolation.model;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Observable;
 
-public abstract class Interpolation extends Observable {
+public abstract class Interpolation
+        extends Observable implements Serializable {
+    private static final long serialVersionUID = 360822176844365239L;
+
     private Collection<Double> xValues;
     private Collection<Double> yValues;
+    private transient Collection<Double> xInterpolated;
+    private transient Collection<Double> yInterpolated;
     private double coefficientA;
     private double coefficientB;
 

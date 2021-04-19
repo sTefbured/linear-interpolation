@@ -19,12 +19,13 @@ public class InitialValuesPanel extends JPanel {
 
     private ArrayList<JTextField> xValuesFields;
     private ArrayList<JTextField> yValuesFields;
+
     private Interpolation interpolation;
 
     private JPanel valuesPanel;
+
     private JFormattedTextField valuesCountField;
     private final JPanel westBorderPanel;
-
     public InitialValuesPanel(Interpolation interpolation) {
         this.interpolation = interpolation;
         setBorder(BorderFactory.createTitledBorder("Input values"));
@@ -66,6 +67,7 @@ public class InitialValuesPanel extends JPanel {
     }
 
     // TODO: finish the method (calculation button)
+
     private JPanel createValuesPanel(int valuesCount) {
         JPanel valuesPanel = new JPanel(new FlowLayout());
         JPanel fieldsPanel = new JPanel(new GridLayout(valuesCount + 1, 2));
@@ -102,7 +104,6 @@ public class InitialValuesPanel extends JPanel {
         valuesPanel.add(initializeButton);
         return valuesPanel;
     }
-
     private void initializeInterpolation() {
         try {
             Collection<Double> timeStamps = parseFields(xValuesFields);
@@ -134,5 +135,9 @@ public class InitialValuesPanel extends JPanel {
                 "Error. Wrong number format.",
                 "Error",
                 JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void setInterpolation(Interpolation interpolation) {
+        this.interpolation = interpolation;
     }
 }

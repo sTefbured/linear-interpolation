@@ -25,14 +25,14 @@ public class GraphPanel extends JPanel implements Observer {
     private final String INTERPOLATED_LINE_KEY = "Interpolated line function";
     private final String INTERPOLATED_POINTS_KEY = "Interpolated points";
 
-    private final Interpolation interpolation;
+    private Interpolation interpolation;
 
     DefaultXYDataset dataset;
+
     private XYSeries initialPointsSeries;
     private XYSeries interpolatedLineSeries;
     private XYSeries interpolatedPointsSeries;
     private final JFreeChart chart;
-
     public GraphPanel(Interpolation interpolation) {
         this.interpolation = interpolation;
         interpolation.addObserver(this);
@@ -142,5 +142,10 @@ public class GraphPanel extends JPanel implements Observer {
         dataset.addSeries(INTERPOLATED_POINTS_KEY,
                 interpolatedLineSeries.toArray());
         repaint();
+    }
+
+    public void setInterpolation(Interpolation interpolation) {
+        this.interpolation = interpolation;
+        update(null, null);
     }
 }
