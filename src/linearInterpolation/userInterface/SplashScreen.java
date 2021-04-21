@@ -14,24 +14,19 @@ public class SplashScreen extends JFrame {
     // TODO: remove image
     private BufferedImage splashScreenImage;
     private final Timer timer;
+    private MainFrame mainFrame;
+    private final Thread mainFrameThread;
 
-    @SuppressWarnings("ConstantConditions")
     public SplashScreen() {
-        ClassLoader classLoader = getClass().getClassLoader();
-        try {
-            InputStream resourceStream = classLoader
-                    .getResourceAsStream("splashscreen.jpg");
-            splashScreenImage = ImageIO.read(resourceStream);
-        } catch (IOException | IllegalArgumentException e) {
-            splashScreenImage = new BufferedImage(800, 600,
-                    BufferedImage.TYPE_INT_ARGB);
-        }
+        mainFrameThread = new Thread(() -> mainFrame = new MainFrame());
+        mainFrameThread.start();
+
         int delayMilliseconds = 60000;
         timer = new Timer(delayMilliseconds, e -> System.exit(0));
 
         setLayout(new GridBagLayout());
         setUndecorated(true);
-        addImageLabel();
+        addSplashScreenText();
         initializeNextButton();
         initializeExitButton();
         addImageLabel();
@@ -41,6 +36,20 @@ public class SplashScreen extends JFrame {
         setVisible(true);
 
         timer.start();
+    }
+
+    @SuppressWarnings("ConstantConditions")
+     private void addSplashScreenText() {
+        ClassLoader classLoader = getClass().getClassLoader();
+        try {
+            InputStream resourceStream = classLoader
+                    .getResourceAsStream("splashscreen.jpg");
+            splashScreenImage = ImageIO.read(resourceStream);
+        } catch (IOException | IllegalArgumentException e) {
+            splashScreenImage = new BufferedImage(800, 600,
+                    BufferedImage.TYPE_INT_ARGB);
+        }
+        addImageLabel();
     }
 
     private void addImageLabel() {
@@ -67,9 +76,14 @@ public class SplashScreen extends JFrame {
     private void initializeNextButton() {
         nextButton = new JButton("Далее");
         nextButton.addActionListener(e -> {
-            new MainFrame();
             timer.stop();
+            try {
+                mainFrameThread.join();
+            } catch (InterruptedException exception) {
+                exception.printStackTrace();
+            }
             dispose();
+            mainFrame.setVisible(true);
         });
     }
 
