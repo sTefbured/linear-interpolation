@@ -1,4 +1,6 @@
-package linearInterpolation.userInterface;
+package linearInterpolation.userInterface.splashScreen;
+
+import linearInterpolation.userInterface.mainFrame.MainFrame;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

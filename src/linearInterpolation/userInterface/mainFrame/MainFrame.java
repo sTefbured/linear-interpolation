@@ -1,9 +1,9 @@
-package linearInterpolation.userInterface;
+package linearInterpolation.userInterface.mainFrame;
 
 import linearInterpolation.model.Interpolation;
 import linearInterpolation.model.LinearInterpolation;
-import linearInterpolation.userInterface.panels.GraphPanel;
-import linearInterpolation.userInterface.panels.InitialValuesPanel;
+import linearInterpolation.userInterface.mainFrame.chart.InterpolationChartPanel;
+import linearInterpolation.userInterface.mainFrame.userInput.InputPanel;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -13,8 +13,8 @@ import java.io.*;
 
 public class MainFrame extends JFrame {
     private Interpolation interpolation;
-    private GraphPanel graphPanel;
-    private InitialValuesPanel initialValuesPanel;
+    private InterpolationChartPanel chartPanel;
+    private InputPanel inputPanel;
     private final JFileChooser fileChooser;
 
     public MainFrame() {
@@ -36,10 +36,10 @@ public class MainFrame extends JFrame {
 
     private void addComponents() {
         interpolation = new LinearInterpolation();
-        initialValuesPanel = new InitialValuesPanel(interpolation);
-        add(initialValuesPanel);
-        graphPanel = new GraphPanel(interpolation);
-        add(graphPanel);
+        inputPanel = new InputPanel(interpolation);
+        add(inputPanel);
+        chartPanel = new InterpolationChartPanel(interpolation);
+        add(chartPanel);
     }
 
     private JMenuBar createMenuBar() {
@@ -98,8 +98,8 @@ public class MainFrame extends JFrame {
 
     private void updateInterpolation(Interpolation interpolation) {
         this.interpolation = interpolation;
-        graphPanel.setInterpolation(interpolation);
-        initialValuesPanel.setInterpolation(interpolation);
+        chartPanel.setInterpolation(interpolation);
+        inputPanel.setInterpolation(interpolation);
     }
 
     private void saveInterpolation() {

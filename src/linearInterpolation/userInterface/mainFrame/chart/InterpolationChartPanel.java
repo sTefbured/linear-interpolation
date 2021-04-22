@@ -1,4 +1,4 @@
-package linearInterpolation.userInterface.panels;
+package linearInterpolation.userInterface.mainFrame.chart;
 
 import linearInterpolation.model.Interpolation;
 import org.jfree.chart.ChartFactory;
@@ -17,7 +17,7 @@ import java.awt.event.MouseListener;
 import java.awt.geom.Ellipse2D;
 import java.util.*;
 
-public class GraphPanel extends JPanel implements Observer {
+public class InterpolationChartPanel extends JPanel implements Observer {
     private final int INTERPOLATED_POINTS_INDEX = 0;
     private final int INITIAL_POINTS_INDEX = 1;
     private final int INTERPOLATED_LINE_INDEX = 2;
@@ -34,7 +34,7 @@ public class GraphPanel extends JPanel implements Observer {
     private XYSeries interpolatedPointsSeries;
     private final JFreeChart chart;
 
-    public GraphPanel(Interpolation interpolation) {
+    public InterpolationChartPanel(Interpolation interpolation) {
         this.interpolation = interpolation;
         interpolation.addObserver(this);
         dataset = createDataset();
