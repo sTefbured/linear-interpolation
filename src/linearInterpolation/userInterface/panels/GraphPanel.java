@@ -18,21 +18,22 @@ import java.awt.geom.Ellipse2D;
 import java.util.*;
 
 public class GraphPanel extends JPanel implements Observer {
-    private final int INITIAL_POINTS_INDEX = 0;
-    private final int INTERPOLATED_LINE_INDEX = 1;
-    private final int INTERPOLATED_POINTS_INDEX = 2;
+    private final int INTERPOLATED_POINTS_INDEX = 0;
+    private final int INITIAL_POINTS_INDEX = 1;
+    private final int INTERPOLATED_LINE_INDEX = 2;
     private final String INITIAL_POINTS_KEY = "Initial points";
     private final String INTERPOLATED_LINE_KEY = "Interpolated line function";
     private final String INTERPOLATED_POINTS_KEY = "Interpolated points";
 
     private Interpolation interpolation;
 
-    DefaultXYDataset dataset;
+    private final DefaultXYDataset dataset;
 
     private XYSeries initialPointsSeries;
     private XYSeries interpolatedLineSeries;
     private XYSeries interpolatedPointsSeries;
     private final JFreeChart chart;
+
     public GraphPanel(Interpolation interpolation) {
         this.interpolation = interpolation;
         interpolation.addObserver(this);
@@ -96,26 +97,35 @@ public class GraphPanel extends JPanel implements Observer {
     }
 
     private void configureRenderer(XYLineAndShapeRenderer renderer) {
+        // Configure renderer for interpolated points
+        renderer.setSeriesFillPaint(INTERPOLATED_POINTS_INDEX, Color.YELLOW);
+        configureRendererForPoints(renderer, INTERPOLATED_POINTS_INDEX);
+
         // Configure renderer for initial points
         renderer.setSeriesFillPaint(INITIAL_POINTS_INDEX, Color.BLUE);
-        renderer.setSeriesPaint(INITIAL_POINTS_INDEX, Color.BLACK);
-        renderer.setUseFillPaint(true);
-        renderer.setSeriesShape(INITIAL_POINTS_INDEX,
-                new Ellipse2D.Double(-5, -5, 10, 10));
-        renderer.setSeriesLinesVisible(INITIAL_POINTS_INDEX, false);
-        renderer.setSeriesShapesVisible(INITIAL_POINTS_INDEX, true);
-        renderer.setSeriesShapesFilled(INITIAL_POINTS_INDEX, true);
+        configureRendererForPoints(renderer, INITIAL_POINTS_INDEX);
 
         // Configure renderer for interpolated line
         renderer.setSeriesStroke(INTERPOLATED_LINE_INDEX, new BasicStroke(5));
+    }
 
-        // TODO: Configure renderer for interpolated points
+    private void configureRendererForPoints(XYLineAndShapeRenderer renderer,
+                                            int seriesIndex) {
+        renderer.setSeriesPaint(seriesIndex, Color.BLACK);
+        renderer.setUseFillPaint(true);
+        renderer.setSeriesShape(seriesIndex,
+                new Ellipse2D.Double(-5, -5, 10, 10));
+        renderer.setSeriesLinesVisible(seriesIndex, false);
+        renderer.setSeriesShapesVisible(seriesIndex, true);
+        renderer.setSeriesShapesFilled(seriesIndex, true);
     }
 
     @Override
     public void update(Observable o, Object arg) {
         Collection<Double> xValues = interpolation.getXValues();
         Collection<Double> yValues = interpolation.getYValues();
+        Collection<Double> interpolatedX = interpolation.getXInterpolated();
+        Collection<Double> interpolatedY = interpolation.getYInterpolated();
 
         // Remove old values
         initialPointsSeries.clear();
@@ -130,22 +140,25 @@ public class GraphPanel extends JPanel implements Observer {
         interpolatedLineSeries.add(xValues.stream().min(Double::compare).get().doubleValue(), y1);
         interpolatedLineSeries.add(xValues.stream().max(Double::compare).get().doubleValue(), y2);
 
-        // TODO: decide how to add interpolated points
+        Iterator<Double> yInterpolatedIterator = interpolatedY.iterator();
+        interpolatedX.forEach(x -> interpolatedPointsSeries.add(x, yInterpolatedIterator.next()));
 
         dataset.removeSeries(INITIAL_POINTS_KEY);
         dataset.removeSeries(INTERPOLATED_LINE_KEY);
         dataset.removeSeries(INTERPOLATED_POINTS_KEY);
+
+        dataset.addSeries(INTERPOLATED_POINTS_KEY,
+                interpolatedPointsSeries.toArray());
         dataset.addSeries(INITIAL_POINTS_KEY,
                 initialPointsSeries.toArray());
         dataset.addSeries(INTERPOLATED_LINE_KEY,
-                interpolatedLineSeries.toArray());
-        dataset.addSeries(INTERPOLATED_POINTS_KEY,
                 interpolatedLineSeries.toArray());
         repaint();
     }
 
     public void setInterpolation(Interpolation interpolation) {
         this.interpolation = interpolation;
+        interpolation.addObserver(this);
         update(null, null);
     }
 }

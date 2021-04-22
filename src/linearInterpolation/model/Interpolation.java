@@ -1,6 +1,7 @@
 package linearInterpolation.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Observable;
 
@@ -10,13 +11,24 @@ public abstract class Interpolation
 
     private Collection<Double> xValues;
     private Collection<Double> yValues;
-    private transient Collection<Double> xInterpolated;
-    private transient Collection<Double> yInterpolated;
+
+    private Collection<Double> xInterpolated;
+    private Collection<Double> yInterpolated;
+
     private double coefficientA;
     private double coefficientB;
 
+    public Interpolation() {
+        xInterpolated = new ArrayList<>();
+        yInterpolated = new ArrayList<>();
+    }
+
     public void initialize(Collection<Double> xValues,
                            Collection<Double> yValues) {
+        if (xValues.size() != yValues.size()) {
+            throw new IndexOutOfBoundsException("X count must be equal"
+                    + "to Y count");
+        }
         this.xValues = xValues;
         this.yValues = yValues;
         initializeCoefficients();
@@ -27,6 +39,13 @@ public abstract class Interpolation
     protected abstract void initializeCoefficients();
 
     public abstract double calculateFunctionValue(double xValue);
+
+    public void addPoint(double x) {
+        xInterpolated.add(x);
+        yInterpolated.add(calculateFunctionValue(x));
+        setChanged();
+        notifyObservers();
+    }
 
     public Collection<Double> getXValues() {
         return xValues;
@@ -50,5 +69,13 @@ public abstract class Interpolation
 
     public double getCoefficientB() {
         return coefficientB;
+    }
+
+    public Collection<Double> getXInterpolated() {
+        return xInterpolated;
+    }
+
+    public Collection<Double> getYInterpolated() {
+        return yInterpolated;
     }
 }

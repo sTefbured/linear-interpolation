@@ -28,11 +28,10 @@ public class MainFrame extends JFrame {
         setLayout(new GridLayout(1, 2));
         addComponents();
         setJMenuBar(createMenuBar());
-        setSize(800, 500);
-        setMinimumSize(new Dimension(700, 500));
+        Dimension screenSize = getToolkit().getScreenSize();
+        setSize(screenSize.width / 2, screenSize.height / 2);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setVisible(true);
     }
 
     private void addComponents() {
@@ -70,24 +69,24 @@ public class MainFrame extends JFrame {
         JMenu fileMenu = new JMenu("File");
         JMenuItem loadItem = new JMenuItem("Load");
         JMenuItem saveItem = new JMenuItem("Save");
-        loadItem.addActionListener(e -> load());
-        saveItem.addActionListener(e -> save());
+        loadItem.addActionListener(e -> loadInterpolation());
+        saveItem.addActionListener(e -> saveInterpolation());
         fileMenu.add(loadItem);
         fileMenu.add(saveItem);
         return fileMenu;
     }
 
-    private void load() {
+    private void loadInterpolation() {
         fileChooser.setSelectedFile(null);
         fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
         int result = fileChooser.showOpenDialog(this);
         if (result != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        File file = fileChooser.getSelectedFile();
-        try (FileInputStream fileStream = new FileInputStream(file);
-             ObjectInputStream inputStream = new ObjectInputStream(fileStream)) {
-            updateInterpolation((Interpolation) inputStream.readObject());
+        File selectedFile = fileChooser.getSelectedFile();
+        try (FileInputStream file = new FileInputStream(selectedFile);
+                ObjectInputStream inStream = new ObjectInputStream(file)) {
+            updateInterpolation((Interpolation) inStream.readObject());
         } catch (IOException | ClassNotFoundException exception) {
             JOptionPane.showMessageDialog(
                     this,
@@ -103,7 +102,7 @@ public class MainFrame extends JFrame {
         initialValuesPanel.setInterpolation(interpolation);
     }
 
-    private void save() {
+    private void saveInterpolation() {
         fileChooser.setSelectedFile(new File("interpolation1.ser"));
         fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
         int result = fileChooser.showSaveDialog(this);
@@ -112,8 +111,8 @@ public class MainFrame extends JFrame {
         }
         File selectedFile = fileChooser.getSelectedFile();
         try (FileOutputStream file = new FileOutputStream(selectedFile);
-             ObjectOutputStream input = new ObjectOutputStream(file)) {
-            input.writeObject(interpolation);
+                ObjectOutputStream outStream = new ObjectOutputStream(file)) {
+            outStream.writeObject(interpolation);
         } catch (IOException exception) {
             JOptionPane.showMessageDialog(
                     this,
