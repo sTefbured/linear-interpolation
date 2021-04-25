@@ -14,7 +14,7 @@ public class SplashScreen extends JFrame {
     private final Timer timer;
     private final Thread mainFrameThread;
     private final GridBagConstraints constraints;
-    
+
     private MainFrame mainFrame;
 
     public SplashScreen() {
@@ -76,6 +76,9 @@ public class SplashScreen extends JFrame {
     private void addImageLabel() {
         ClassLoader loader = getClass().getClassLoader();
         URL url = loader.getResource("icon.png");
+        if (url == null) {
+            return;
+        }
         Image image = new ImageIcon(url).getImage();
         Image scaledImage = image.getScaledInstance(300, 300, SCALE_FAST);
         JLabel imageLabel = new JLabel(new ImageIcon(scaledImage));
