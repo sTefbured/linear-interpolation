@@ -80,6 +80,12 @@ public class MenuBar extends JMenuBar {
     }
 
     private void saveInterpolation() {
+        if (MainFrame.getInterpolation().isEmpty()) {
+            JOptionPane.showMessageDialog(parentFrame,
+                    "You can not save empty interpolation.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         File initialFile = new File("interpolation1." + fileExtension);
         fileChooser.setSelectedFile(initialFile);
         fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);

@@ -121,6 +121,7 @@ public class InterpolationChartPanel
     }
 
     @Override
+    @SuppressWarnings("All")
     public void update(ObjectUpdateEvent event) {
         Interpolation interpolation = MainFrame.getInterpolation();
         Collection<Double> xValues = interpolation.getXValues();
@@ -136,13 +137,16 @@ public class InterpolationChartPanel
         // Add new values
         Iterator<Double> yIterator = yValues.iterator();
         xValues.forEach(x -> initialPointsSeries.add(x, yIterator.next()));
-        double y1 = interpolation.calculateFunctionValue(xValues.stream().min(Double::compare).get());
-        double y2 = interpolation.calculateFunctionValue(xValues.stream().max(Double::compare).get());
-        interpolatedLineSeries.add(xValues.stream().min(Double::compare).get().doubleValue(), y1);
-        interpolatedLineSeries.add(xValues.stream().max(Double::compare).get().doubleValue(), y2);
+        double x1 = xValues.stream().min(Double::compare).get();
+        double x2 = xValues.stream().max(Double::compare).get();
+        double y1 = interpolation.calculateFunctionValue(x1);
+        double y2 = interpolation.calculateFunctionValue(x2);
+        interpolatedLineSeries.add(x1, y1);
+        interpolatedLineSeries.add(x2, y2);
 
         Iterator<Double> yInterpolatedIterator = interpolatedY.iterator();
-        interpolatedX.forEach(x -> interpolatedPointsSeries.add(x, yInterpolatedIterator.next()));
+        interpolatedX.forEach(x -> interpolatedPointsSeries
+                .add(x, yInterpolatedIterator.next()));
 
         dataset.removeSeries(INITIAL_POINTS_KEY);
         dataset.removeSeries(INTERPOLATED_LINE_KEY);

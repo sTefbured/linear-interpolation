@@ -21,6 +21,8 @@ public abstract class Interpolation implements Serializable {
     public Interpolation() {
         xInterpolated = new ArrayList<>();
         yInterpolated = new ArrayList<>();
+        xValues = new ArrayList<>();
+        yValues = new ArrayList<>();
     }
 
     public void initialize(Collection<Double> xValues,
@@ -62,6 +64,10 @@ public abstract class Interpolation implements Serializable {
 
     public boolean isInitialized() {
         return xValues != null && yValues != null;
+    }
+
+    public boolean isEmpty() {
+        return xValues.isEmpty() || yValues.isEmpty();
     }
 
     public Collection<Double> getXValues() {
