@@ -1,5 +1,8 @@
 package linearInterpolation.userInterface.mainFrame.userInput.inner;
 
+import linearInterpolation.model.Interpolation;
+import linearInterpolation.model.event.ObjectUpdateEvent;
+import linearInterpolation.model.listener.ObjectUpdateListener;
 import linearInterpolation.userInterface.mainFrame.MainFrame;
 
 import javax.swing.*;
@@ -8,11 +11,13 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 
-public class InitializingPanel extends JPanel {
+public class InitializingPanel extends JPanel implements ObjectUpdateListener {
+    public final int MAX_VALUES_COUNT = 125;
     private final NumberFormat numberFormat = NumberFormat.getNumberInstance();
     private final NumberFormat intFormat = NumberFormat.getIntegerInstance();
     public final int defaultValuesCount = 5;
@@ -30,7 +35,25 @@ public class InitializingPanel extends JPanel {
         add(valuesPanel);
     }
 
-    // FIXME: filter negative values, zero and too big values
+    // TODO: pay attention, maybe should delete that
+    @Override
+    public void update(ObjectUpdateEvent event) {
+        Collection<Double> xValues = MainFrame.getInterpolation().getXValues();
+        Collection<Double> yValues = MainFrame.getInterpolation().getYValues();
+        updateValuesPanel(xValues.size());
+        fillValueFields(xValues, yValues);
+    }
+
+    private void fillValueFields(Collection<Double> xValues,
+                                 Collection<Double> yValues) {
+        Iterator<Double> xIterator = xValues.iterator();
+        Iterator<Double> yIterator = yValues.iterator();
+        for (int i = 0; i < xValuesFields.size(); i++) {
+            xValuesFields.get(i).setText(xIterator.next().toString());
+            yValuesFields.get(i).setText(yIterator.next().toString());
+        }
+    }
+
     private JPanel createCountPanel() {
         JPanel countPanel = new JPanel(new FlowLayout());
         valuesCountField = new JFormattedTextField(intFormat);
@@ -38,20 +61,27 @@ public class InitializingPanel extends JPanel {
 
         valuesCountField.setValue(defaultValuesCount);
         valuesCountField.setColumns(5);
-        setButton.addActionListener(e -> updateValuesPanel());
+        setButton.addActionListener(e -> updateValuesPanel(getValuesCount()));
         countPanel.add(valuesCountField);
         countPanel.add(setButton);
         return countPanel;
     }
 
-    private void updateValuesPanel() {
+    private int getValuesCount() {
         int count;
         try {
             count = intFormat.parse(valuesCountField.getText()).intValue();
-        } catch (ParseException e) {
+            if (count <= 0 || count > MAX_VALUES_COUNT) {
+                throw new NumberFormatException();
+            }
+        } catch (NumberFormatException | ParseException e) {
             showNumberFormatErrorDialog();
-            return;
+            return -1;
         }
+        return count;
+    }
+
+    private void updateValuesPanel(int count) {
         remove(valuesPanel);
         valuesPanel = createValuesPanel(count);
         add(valuesPanel);

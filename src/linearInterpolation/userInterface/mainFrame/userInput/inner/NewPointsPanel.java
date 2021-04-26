@@ -15,11 +15,20 @@ import java.util.Iterator;
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 
+/**
+ * NewPointsPanel is an extension of JPanel that contains UI components
+ * for calculating function values and list of result points.
+ * Calculation is performed by entering an integer value into test field
+ * and pressing "Add" button. Result point will be displayed on chart and
+ * its values will be shown in JList.
+ *
+ * @author Kotikov S.G.
+ */
 public class NewPointsPanel extends JPanel implements ObjectUpdateListener {
     private final NumberFormat numberFormat = NumberFormat.getNumberInstance();
     private final JFormattedTextField xField;
     private final JButton addButton;
-    private JList<Point2D.Double> addedPoints;
+    private final JList<Point2D.Double> addedPoints;
 
     public NewPointsPanel() {
         MainFrame.getInterpolation().addObjectUpdateListener(this);
@@ -27,12 +36,23 @@ public class NewPointsPanel extends JPanel implements ObjectUpdateListener {
         JPanel xFieldPanel = new JPanel(new FlowLayout());
         xField = createXField();
         addButton = createAddButton();
-        setEnabledComponents(false);
+        addedPoints = new JList<>();
+        addedPoints.setModel(createListModel());
+        JPanel addedPointsPanel = createAddedPointsList();
+        setComponentsEnabled(false);
         xFieldPanel.add(xField);
         xFieldPanel.add(addButton);
         add(xFieldPanel);
-        add(createAddedPointsList());
+        add(addedPointsPanel);
         setBorder(BorderFactory.createTitledBorder("Enter X"));
+    }
+
+    @Override
+    public void update(ObjectUpdateEvent event) {
+        if (MainFrame.getInterpolation().isInitialized()) {
+            setComponentsEnabled(true);
+        }
+        addedPoints.setModel(createListModel());
     }
 
     private JFormattedTextField createXField() {
@@ -47,16 +67,17 @@ public class NewPointsPanel extends JPanel implements ObjectUpdateListener {
             try {
                 MainFrame.getInterpolation().addPoint(parseField(xField));
             } catch (ParseException parseException) {
-                //TODO: maybe insert number format error dialog
-                parseException.printStackTrace();
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Error. Wrong number format.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
         return button;
     }
 
     private JPanel createAddedPointsList() {
-        addedPoints = new JList<>();
-        addedPoints.setModel(createListModel());
         JPanel panel = new JPanel(new BorderLayout());
         JScrollPane scrollPane = new JScrollPane(addedPoints,
                 VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_NEVER);
@@ -83,25 +104,17 @@ public class NewPointsPanel extends JPanel implements ObjectUpdateListener {
         return dataModel;
     }
 
-    // TODO: maybe change name
-    private void setEnabledComponents(boolean enabled) {
+    private void setComponentsEnabled(boolean enabled) {
         xField.setEditable(enabled);
         final String tooltipText = "You must input initial values first.";
         xField.setToolTipText(enabled ? "" : tooltipText);
         addButton.setEnabled(enabled);
+        addedPoints.setEnabled(enabled);
     }
 
     // TODO: move to utils class
     private Double parseField(JTextField field) throws ParseException {
         String text = field.getText();
         return numberFormat.parse(text).doubleValue();
-    }
-
-    @Override
-    public void update(ObjectUpdateEvent event) {
-        if (MainFrame.getInterpolation().isInitialized()) {
-            setEnabledComponents(true);
-        }
-        addedPoints.setModel(createListModel());
     }
 }

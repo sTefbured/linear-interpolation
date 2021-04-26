@@ -8,6 +8,12 @@ import java.net.URL;
 
 import static java.awt.Image.SCALE_FAST;
 
+/**
+ * A SplashScreen is an extended version of JFrame that shows
+ * information about the project while the MainFrame is creating.
+ *
+ * @author Kotikov S.G.
+ */
 public class SplashScreen extends JFrame {
     private final JButton nextButton;
     private final JButton exitButton;
@@ -17,11 +23,15 @@ public class SplashScreen extends JFrame {
 
     private MainFrame mainFrame;
 
+    /**
+     * Creates visible SplashScreen frame and starts MainFrame creating
+     * in parallel thread.
+     */
     public SplashScreen() {
         mainFrameThread = new Thread(() -> mainFrame = new MainFrame());
         mainFrameThread.start();
 
-        int delayMilliseconds = 60000;
+        final int delayMilliseconds = 60000;
         timer = new Timer(delayMilliseconds, e -> System.exit(0));
 
         setLayout(new GridBagLayout());
