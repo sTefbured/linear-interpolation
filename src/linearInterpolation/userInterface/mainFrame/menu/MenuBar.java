@@ -2,6 +2,8 @@ package linearInterpolation.userInterface.mainFrame.menu;
 
 import linearInterpolation.model.Interpolation;
 import linearInterpolation.userInterface.mainFrame.MainFrame;
+import linearInterpolation.userInterface.mainFrame.about.AboutAuthorDialog;
+import linearInterpolation.userInterface.mainFrame.about.AboutProgramDialog;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -113,12 +115,10 @@ public class MenuBar extends JMenuBar {
         JMenu aboutMenu = new JMenu("About");
         JMenuItem aboutDeveloperItem = new JMenuItem("Developer");
         JMenuItem aboutProgramItem = new JMenuItem("Program");
-        aboutDeveloperItem.addActionListener(e -> {
-
-        });
-        aboutProgramItem.addActionListener(e -> {
-
-        });
+        aboutDeveloperItem
+                .addActionListener(e -> new AboutAuthorDialog(parentFrame));
+        aboutProgramItem
+                .addActionListener(e -> new AboutProgramDialog(parentFrame));
         aboutMenu.add(aboutDeveloperItem);
         aboutMenu.add(aboutProgramItem);
         return aboutMenu;

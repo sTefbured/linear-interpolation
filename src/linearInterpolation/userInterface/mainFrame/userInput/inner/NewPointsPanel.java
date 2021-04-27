@@ -24,6 +24,7 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
  *
  * @author Kotikov S.G.
  */
+// FIXME: prevent adding new similar points
 public class NewPointsPanel extends JPanel implements ObjectUpdateListener {
     private final NumberFormat numberFormat = NumberFormat.getNumberInstance();
     private final JFormattedTextField xField;
@@ -38,12 +39,11 @@ public class NewPointsPanel extends JPanel implements ObjectUpdateListener {
         addButton = createAddButton();
         addedPoints = new JList<>();
         addedPoints.setModel(createListModel());
-        JPanel addedPointsPanel = createAddedPointsList();
         setComponentsEnabled(false);
         xFieldPanel.add(xField);
         xFieldPanel.add(addButton);
         add(xFieldPanel);
-        add(addedPointsPanel);
+        add(createAddedPointsListPanel());
         setBorder(BorderFactory.createTitledBorder("Enter X"));
     }
 
@@ -77,7 +77,7 @@ public class NewPointsPanel extends JPanel implements ObjectUpdateListener {
         return button;
     }
 
-    private JPanel createAddedPointsList() {
+    private JPanel createAddedPointsListPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         JScrollPane scrollPane = new JScrollPane(addedPoints,
                 VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_NEVER);
@@ -109,7 +109,6 @@ public class NewPointsPanel extends JPanel implements ObjectUpdateListener {
         final String tooltipText = "You must input initial values first.";
         xField.setToolTipText(enabled ? "" : tooltipText);
         addButton.setEnabled(enabled);
-        addedPoints.setEnabled(enabled);
     }
 
     // TODO: move to utils class
