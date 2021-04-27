@@ -33,6 +33,8 @@ public abstract class Interpolation implements Serializable {
         }
         this.xValues = xValues;
         this.yValues = yValues;
+        xInterpolated.clear();
+        yInterpolated.clear();
         initializeCoefficients();
         notifyObjectUpdateListeners();
     }
@@ -42,6 +44,9 @@ public abstract class Interpolation implements Serializable {
     public abstract double calculateFunctionValue(double xValue);
 
     public void addPoint(double x) {
+        if (xInterpolated.contains(x)) {
+            return;
+        }
         xInterpolated.add(x);
         yInterpolated.add(calculateFunctionValue(x));
         notifyObjectUpdateListeners();
