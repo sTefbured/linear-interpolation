@@ -1,6 +1,5 @@
 package linearInterpolation.userInterface.mainFrame.userInput.inner;
 
-import linearInterpolation.model.Interpolation;
 import linearInterpolation.model.event.ObjectUpdateEvent;
 import linearInterpolation.model.listener.ObjectUpdateListener;
 import linearInterpolation.userInterface.mainFrame.MainFrame;
@@ -35,7 +34,6 @@ public class InitializingPanel extends JPanel implements ObjectUpdateListener {
         add(valuesPanel);
     }
 
-    // TODO: pay attention, maybe should delete that
     @Override
     public void update(ObjectUpdateEvent event) {
         Collection<Double> xValues = MainFrame.getInterpolation().getXValues();
@@ -88,12 +86,13 @@ public class InitializingPanel extends JPanel implements ObjectUpdateListener {
         valuesPanel.revalidate();
     }
 
-    // FIXME: fix layout
     private JPanel createValuesPanel(int valuesCount) {
         JPanel valuesPanel = new JPanel();
         valuesPanel.setLayout(new BorderLayout());
         JPanel fieldsPanel = new JPanel(new GridLayout(valuesCount + 1, 2));
-        JScrollPane scrollPane = new JScrollPane(fieldsPanel,
+        JPanel outerFieldsPanel = new JPanel(new BorderLayout());
+        outerFieldsPanel.add(fieldsPanel, BorderLayout.NORTH);
+        JScrollPane scrollPane = new JScrollPane(outerFieldsPanel,
                 VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(200, 300));
 
