@@ -2,37 +2,45 @@ package linearInterpolation.userInterface.splashScreen;
 
 import linearInterpolation.userInterface.mainFrame.MainFrame;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
+import java.net.URL;
 
+import static java.awt.Image.SCALE_FAST;
+
+/**
+ * A SplashScreen is an extended version of JFrame that shows
+ * information about the project while the MainFrame is creating.
+ *
+ * @author Kotikov S.G.
+ */
 public class SplashScreen extends JFrame {
-    private JButton nextButton;
-    private JButton exitButton;
-
-    // TODO: remove image
-    private BufferedImage splashScreenImage;
+    private final JButton nextButton;
+    private final JButton exitButton;
     private final Timer timer;
-    private MainFrame mainFrame;
     private final Thread mainFrameThread;
+    private final GridBagConstraints constraints;
 
+    private MainFrame mainFrame;
+
+    /**
+     * Creates visible SplashScreen frame and starts MainFrame creating
+     * in parallel thread.
+     */
     public SplashScreen() {
         mainFrameThread = new Thread(() -> mainFrame = new MainFrame());
         mainFrameThread.start();
 
-        int delayMilliseconds = 60000;
+        final int delayMilliseconds = 60000;
         timer = new Timer(delayMilliseconds, e -> System.exit(0));
 
         setLayout(new GridBagLayout());
-        setUndecorated(true);
+        constraints = new GridBagConstraints();
         addSplashScreenText();
-        initializeNextButton();
-        initializeExitButton();
-        addImageLabel();
+        nextButton = createNextButton();
+        exitButton = createExitButton();
         addButtons();
+        setUndecorated(true);
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
@@ -40,57 +48,100 @@ public class SplashScreen extends JFrame {
         timer.start();
     }
 
-    @SuppressWarnings("ConstantConditions")
-     private void addSplashScreenText() {
-        ClassLoader classLoader = getClass().getClassLoader();
-        try {
-            InputStream resourceStream = classLoader
-                    .getResourceAsStream("splashscreen.jpg");
-            splashScreenImage = ImageIO.read(resourceStream);
-        } catch (IOException | IllegalArgumentException e) {
-            splashScreenImage = new BufferedImage(800, 600,
-                    BufferedImage.TYPE_INT_ARGB);
-        }
+    private void addSplashScreenText() {
+        addHeadLabel();
+        addBodyLabel();
         addImageLabel();
+        addInfoLabel();
+    }
+
+    private void addHeadLabel() {
+        JLabel headLabel = new JLabel("<html><center><h2>"
+                + "Белорусский национальный технический университет<br>"
+                + "Факультет информационных технологий и робототехники<br>"
+                + "Кафедра программного обеспечения информационных систем "
+                + "и технологий<br></h2></center></html>");
+        headLabel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
+        constraints.gridwidth = 2;
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        Insets oldInsets = constraints.insets;
+        constraints.insets = new Insets(0, 10, 50, 10);
+        add(headLabel, constraints);
+        constraints.insets = oldInsets;
+    }
+
+    private void addBodyLabel() {
+        JLabel bodyLabel = new JLabel("<html><center><h1>Курсовая работа<br>"
+                + "по дисциплине «Программирование на Java»<br>"
+                + "Линейная интерполяция и экстраполяция<br>"
+                + "в технических задачах<br></h1></center></html>");
+        bodyLabel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
+        constraints.gridwidth = 2;
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        add(bodyLabel, constraints);
     }
 
     private void addImageLabel() {
-        JLabel label = new JLabel(new ImageIcon(splashScreenImage));
-        GridBagConstraints constraints = new GridBagConstraints();
+        ClassLoader loader = getClass().getClassLoader();
+        URL url = loader.getResource("icon.png");
+        if (url == null) {
+            return;
+        }
+        Image image = new ImageIcon(url).getImage();
+        Image scaledImage = image.getScaledInstance(300, 300, SCALE_FAST);
+        JLabel imageLabel = new JLabel(new ImageIcon(scaledImage));
+        constraints.gridwidth = 1;
         constraints.gridx = 0;
-        constraints.gridy = 0;
-        constraints.gridwidth = 2;
-        getContentPane().add(label, constraints);
+        constraints.gridy = 2;
+        add(imageLabel, constraints);
+    }
+
+    private void addInfoLabel() {
+        JLabel infoLabel = new JLabel("<html><h2>"
+                + "Выполнил: студент группы 10702418<br>"
+                + "Котиков Степан Георгиевич<br><br>"
+                + "Преподаватель: к.ф.-м.н., доц.<br>"
+                + "Сидорик Валерий Владимирович<br></h2></html>");
+        constraints.gridwidth = 1;
+        constraints.gridx = 1;
+        constraints.gridy = 2;
+        add(infoLabel, constraints);
     }
 
     private void addButtons() {
-        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridwidth = 1;
         constraints.gridx = 0;
-        constraints.gridy = 1;
+        constraints.gridy = 3;
         constraints.weightx = 0.5;
-        constraints.ipady = 40;
+        constraints.ipady = 20;
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        getContentPane().add(nextButton, constraints);
+        add(nextButton, constraints);
         constraints.gridx = 1;
-        getContentPane().add(exitButton, constraints);
+        add(exitButton, constraints);
     }
 
-    private void initializeNextButton() {
-        nextButton = new JButton("Далее");
-        nextButton.addActionListener(e -> {
-            timer.stop();
-            try {
-                mainFrameThread.join();
-            } catch (InterruptedException exception) {
-                exception.printStackTrace();
-            }
-            dispose();
-            mainFrame.setVisible(true);
-        });
+    private JButton createNextButton() {
+        JButton button = new JButton("Далее");
+        button.addActionListener(e -> switchToMainFrame());
+        return button;
     }
 
-    private void initializeExitButton() {
-        exitButton = new JButton("Выход");
-        exitButton.addActionListener(e -> System.exit(0));
+    private void switchToMainFrame() {
+        timer.stop();
+        try {
+            mainFrameThread.join();
+        } catch (InterruptedException exception) {
+            exception.printStackTrace();
+        }
+        dispose();
+        mainFrame.setVisible(true);
+    }
+
+    private JButton createExitButton() {
+        JButton button = new JButton("Выход");
+        button.addActionListener(e -> System.exit(0));
+        return button;
     }
 }

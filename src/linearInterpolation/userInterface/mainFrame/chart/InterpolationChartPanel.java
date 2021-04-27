@@ -1,6 +1,9 @@
 package linearInterpolation.userInterface.mainFrame.chart;
 
 import linearInterpolation.model.Interpolation;
+import linearInterpolation.model.event.ObjectUpdateEvent;
+import linearInterpolation.model.listener.ObjectUpdateListener;
+import linearInterpolation.userInterface.mainFrame.MainFrame;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -17,28 +20,25 @@ import java.awt.event.MouseListener;
 import java.awt.geom.Ellipse2D;
 import java.util.*;
 
-public class InterpolationChartPanel extends JPanel implements Observer {
-    private final int INTERPOLATED_POINTS_INDEX = 0;
-    private final int INITIAL_POINTS_INDEX = 1;
-    private final int INTERPOLATED_LINE_INDEX = 2;
+public class InterpolationChartPanel
+        extends JPanel implements ObjectUpdateListener {
+    public final int INTERPOLATED_POINTS_INDEX = 0;
+    public final int INITIAL_POINTS_INDEX = 1;
+    public final int INTERPOLATED_LINE_INDEX = 2;
     private final String INITIAL_POINTS_KEY = "Initial points";
     private final String INTERPOLATED_LINE_KEY = "Interpolated line function";
     private final String INTERPOLATED_POINTS_KEY = "Interpolated points";
-
-    private Interpolation interpolation;
 
     private final DefaultXYDataset dataset;
 
     private XYSeries initialPointsSeries;
     private XYSeries interpolatedLineSeries;
     private XYSeries interpolatedPointsSeries;
-    private final JFreeChart chart;
 
-    public InterpolationChartPanel(Interpolation interpolation) {
-        this.interpolation = interpolation;
-        interpolation.addObserver(this);
+    public InterpolationChartPanel() {
+        MainFrame.getInterpolation().addObjectUpdateListener(this);
         dataset = createDataset();
-        chart = createChart(dataset);
+        JFreeChart chart = createChart(dataset);
         ChartPanel panel = new ChartPanel(chart);
         EventListener[] listeners = panel.getListeners(MouseListener.class);
         for (EventListener listener : listeners) {
@@ -65,7 +65,7 @@ public class InterpolationChartPanel extends JPanel implements Observer {
 
     private JFreeChart createChart(XYDataset dataset) {
         JFreeChart chart = ChartFactory.createXYLineChart("Cooling function",
-                "time, min", "temperature, K", dataset);
+                "time, hour", "temperature, K", dataset);
         chart.setBackgroundPaint(Color.WHITE);
 
         XYPlot plot = chart.getXYPlot();
@@ -121,7 +121,9 @@ public class InterpolationChartPanel extends JPanel implements Observer {
     }
 
     @Override
-    public void update(Observable o, Object arg) {
+    @SuppressWarnings("All")
+    public void update(ObjectUpdateEvent event) {
+        Interpolation interpolation = MainFrame.getInterpolation();
         Collection<Double> xValues = interpolation.getXValues();
         Collection<Double> yValues = interpolation.getYValues();
         Collection<Double> interpolatedX = interpolation.getXInterpolated();
@@ -135,13 +137,16 @@ public class InterpolationChartPanel extends JPanel implements Observer {
         // Add new values
         Iterator<Double> yIterator = yValues.iterator();
         xValues.forEach(x -> initialPointsSeries.add(x, yIterator.next()));
-        double y1 = interpolation.calculateFunctionValue(xValues.stream().min(Double::compare).get());
-        double y2 = interpolation.calculateFunctionValue(xValues.stream().max(Double::compare).get());
-        interpolatedLineSeries.add(xValues.stream().min(Double::compare).get().doubleValue(), y1);
-        interpolatedLineSeries.add(xValues.stream().max(Double::compare).get().doubleValue(), y2);
+        double x1 = xValues.stream().min(Double::compare).get();
+        double x2 = xValues.stream().max(Double::compare).get();
+        double y1 = interpolation.calculateFunctionValue(x1);
+        double y2 = interpolation.calculateFunctionValue(x2);
+        interpolatedLineSeries.add(x1, y1);
+        interpolatedLineSeries.add(x2, y2);
 
         Iterator<Double> yInterpolatedIterator = interpolatedY.iterator();
-        interpolatedX.forEach(x -> interpolatedPointsSeries.add(x, yInterpolatedIterator.next()));
+        interpolatedX.forEach(x -> interpolatedPointsSeries
+                .add(x, yInterpolatedIterator.next()));
 
         dataset.removeSeries(INITIAL_POINTS_KEY);
         dataset.removeSeries(INTERPOLATED_LINE_KEY);
@@ -154,11 +159,5 @@ public class InterpolationChartPanel extends JPanel implements Observer {
         dataset.addSeries(INTERPOLATED_LINE_KEY,
                 interpolatedLineSeries.toArray());
         repaint();
-    }
-
-    public void setInterpolation(Interpolation interpolation) {
-        this.interpolation = interpolation;
-        interpolation.addObserver(this);
-        update(null, null);
     }
 }
