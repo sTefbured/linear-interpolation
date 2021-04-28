@@ -41,14 +41,12 @@ public class MainFrame extends JFrame {
      * Sets new value for interpolation field,
      * adds ObjectUpdateListener objects to it.
      *
-     * @see linearInterpolation.model.listener.ObjectUpdateListener
-     *
      * @param interpolation new instance of Interpolation
+     * @see linearInterpolation.model.listener.ObjectUpdateListener
      */
     public static void setInterpolation(Interpolation interpolation) {
         MainFrame.interpolation = interpolation;
-        interpolation
-                .addObjectUpdateListener(inputPanel.getInitializingPanel());
+        interpolation.addObjectUpdateListener(inputPanel.getInitializingPanel());
         interpolation.addObjectUpdateListener(inputPanel.getNewPointsPanel());
         interpolation.addObjectUpdateListener(chartPanel);
         interpolation.notifyObjectUpdateListeners();

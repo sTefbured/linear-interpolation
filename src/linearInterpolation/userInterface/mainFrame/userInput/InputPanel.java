@@ -1,6 +1,7 @@
 package linearInterpolation.userInterface.mainFrame.userInput;
 
-import linearInterpolation.userInterface.mainFrame.userInput.inner.*;
+import linearInterpolation.userInterface.mainFrame.userInput.inner.InitializingPanel;
+import linearInterpolation.userInterface.mainFrame.userInput.inner.NewPointsPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,6 +30,7 @@ public class InputPanel extends JPanel {
 
     /**
      * Get initializingPanel.
+     *
      * @return initializingPanel.
      */
     public InitializingPanel getInitializingPanel() {
@@ -37,6 +39,7 @@ public class InputPanel extends JPanel {
 
     /**
      * Get newPointsPanel.
+     *
      * @return newPointsPanel.
      */
     public NewPointsPanel getNewPointsPanel() {

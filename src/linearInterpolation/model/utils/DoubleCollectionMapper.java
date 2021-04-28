@@ -15,8 +15,7 @@ public final class DoubleCollectionMapper {
                                         Collection<Double> second,
                                         DoubleBinaryOperator mapper) {
         if (first.size() != second.size()) {
-            throw new IndexOutOfBoundsException(
-                    "Collections must have the same count.");
+            throw new IndexOutOfBoundsException("Collections must have the same count.");
         }
         int count = first.size();
         double[] resultArray = new double[count];

@@ -5,16 +5,18 @@ import linearInterpolation.model.listener.ObjectUpdateListener;
 
 import javax.swing.event.EventListenerList;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public abstract class Interpolation implements Serializable {
     private static final long serialVersionUID = 360822176844365239L;
 
     private transient EventListenerList listeners;
-    private Collection<Double> xValues;
-    private Collection<Double> yValues;
-    private final Collection<Double> xInterpolated;
-    private final Collection<Double> yInterpolated;
+    private List<Double> xValues;
+    private List<Double> yValues;
+    private final List<Double> xInterpolated;
+    private final List<Double> yInterpolated;
     private double coefficientA;
     private double coefficientB;
 
@@ -25,14 +27,15 @@ public abstract class Interpolation implements Serializable {
         yValues = new ArrayList<>();
     }
 
-    public void initialize(Collection<Double> xValues,
-                           Collection<Double> yValues) {
+    public void initialize(List<Double> xValues,
+                           List<Double> yValues) {
         if (xValues.size() != yValues.size()) {
-            throw new IllegalArgumentException("X count must be equal"
-                    + "to Y count");
+            throw new IllegalArgumentException("X count must be equal to Y count");
         }
         this.xValues = xValues;
         this.yValues = yValues;
+        xInterpolated.clear();
+        yInterpolated.clear();
         initializeCoefficients();
         notifyObjectUpdateListeners();
     }
@@ -42,8 +45,20 @@ public abstract class Interpolation implements Serializable {
     public abstract double calculateFunctionValue(double xValue);
 
     public void addPoint(double x) {
+        if (xInterpolated.contains(x)) {
+            return;
+        }
         xInterpolated.add(x);
         yInterpolated.add(calculateFunctionValue(x));
+        notifyObjectUpdateListeners();
+    }
+
+    public void removePoint(double x, double y) {
+        int index = xInterpolated.indexOf(x);
+        if ((index >= 0) && (y == yInterpolated.get(index))) {
+            xInterpolated.remove(index);
+            yInterpolated.remove(index);
+        }
         notifyObjectUpdateListeners();
     }
 
@@ -56,8 +71,7 @@ public abstract class Interpolation implements Serializable {
 
     public void notifyObjectUpdateListeners() {
         ObjectUpdateEvent event = new ObjectUpdateEvent(this);
-        for (ObjectUpdateListener listener
-                : listeners.getListeners(ObjectUpdateListener.class)) {
+        for (ObjectUpdateListener listener : listeners.getListeners(ObjectUpdateListener.class)) {
             listener.update(event);
         }
     }

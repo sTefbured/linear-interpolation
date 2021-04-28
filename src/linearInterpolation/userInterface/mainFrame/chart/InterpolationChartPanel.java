@@ -18,10 +18,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseListener;
 import java.awt.geom.Ellipse2D;
-import java.util.*;
+import java.util.Collection;
+import java.util.EventListener;
+import java.util.Iterator;
 
-public class InterpolationChartPanel
-        extends JPanel implements ObjectUpdateListener {
+public class InterpolationChartPanel extends JPanel implements ObjectUpdateListener {
     public final int INTERPOLATED_POINTS_INDEX = 0;
     public final int INITIAL_POINTS_INDEX = 1;
     public final int INTERPOLATED_LINE_INDEX = 2;
@@ -44,7 +45,6 @@ public class InterpolationChartPanel
         for (EventListener listener : listeners) {
             panel.removeMouseListener((MouseListener) listener);
         }
-
         setLayout(new GridLayout(1, 1));
         add(panel);
     }
@@ -54,12 +54,9 @@ public class InterpolationChartPanel
         initialPointsSeries = new XYSeries(INITIAL_POINTS_KEY);
         interpolatedLineSeries = new XYSeries(INTERPOLATED_LINE_KEY);
         interpolatedPointsSeries = new XYSeries(INTERPOLATED_POINTS_KEY);
-        dataset.addSeries(INITIAL_POINTS_KEY,
-                initialPointsSeries.toArray());
-        dataset.addSeries(INTERPOLATED_LINE_KEY,
-                interpolatedLineSeries.toArray());
-        dataset.addSeries(INTERPOLATED_POINTS_KEY,
-                interpolatedPointsSeries.toArray());
+        dataset.addSeries(INITIAL_POINTS_KEY, initialPointsSeries.toArray());
+        dataset.addSeries(INTERPOLATED_LINE_KEY, interpolatedLineSeries.toArray());
+        dataset.addSeries(INTERPOLATED_POINTS_KEY, interpolatedPointsSeries.toArray());
         return dataset;
     }
 
@@ -109,17 +106,16 @@ public class InterpolationChartPanel
         renderer.setSeriesStroke(INTERPOLATED_LINE_INDEX, new BasicStroke(5));
     }
 
-    private void configureRendererForPoints(XYLineAndShapeRenderer renderer,
-                                            int seriesIndex) {
+    private void configureRendererForPoints(XYLineAndShapeRenderer renderer, int seriesIndex) {
         renderer.setSeriesPaint(seriesIndex, Color.BLACK);
         renderer.setUseFillPaint(true);
-        renderer.setSeriesShape(seriesIndex,
-                new Ellipse2D.Double(-5, -5, 10, 10));
+        renderer.setSeriesShape(seriesIndex, new Ellipse2D.Double(-5, -5, 10, 10));
         renderer.setSeriesLinesVisible(seriesIndex, false);
         renderer.setSeriesShapesVisible(seriesIndex, true);
         renderer.setSeriesShapesFilled(seriesIndex, true);
     }
 
+    // TODO: pay attention. Maybe should simplify
     @Override
     @SuppressWarnings("All")
     public void update(ObjectUpdateEvent event) {
@@ -145,19 +141,15 @@ public class InterpolationChartPanel
         interpolatedLineSeries.add(x2, y2);
 
         Iterator<Double> yInterpolatedIterator = interpolatedY.iterator();
-        interpolatedX.forEach(x -> interpolatedPointsSeries
-                .add(x, yInterpolatedIterator.next()));
+        interpolatedX.forEach(x -> interpolatedPointsSeries.add(x, yInterpolatedIterator.next()));
 
         dataset.removeSeries(INITIAL_POINTS_KEY);
         dataset.removeSeries(INTERPOLATED_LINE_KEY);
         dataset.removeSeries(INTERPOLATED_POINTS_KEY);
 
-        dataset.addSeries(INTERPOLATED_POINTS_KEY,
-                interpolatedPointsSeries.toArray());
-        dataset.addSeries(INITIAL_POINTS_KEY,
-                initialPointsSeries.toArray());
-        dataset.addSeries(INTERPOLATED_LINE_KEY,
-                interpolatedLineSeries.toArray());
+        dataset.addSeries(INTERPOLATED_POINTS_KEY, interpolatedPointsSeries.toArray());
+        dataset.addSeries(INITIAL_POINTS_KEY, initialPointsSeries.toArray());
+        dataset.addSeries(INTERPOLATED_LINE_KEY, interpolatedLineSeries.toArray());
         repaint();
     }
 }

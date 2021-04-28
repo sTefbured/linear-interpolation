@@ -28,8 +28,7 @@ public class MenuBar extends JMenuBar {
     private JFileChooser createFileChooser() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setSize(300, 200);
-        FileFilter filter = new FileNameExtensionFilter(
-                fileDescription, fileExtension);
+        FileFilter filter = new FileNameExtensionFilter(fileDescription, fileExtension);
         fileChooser.setFileFilter(filter);
         fileChooser.addActionListener(e -> {
             if (fileChooser.getDialogType() != JFileChooser.SAVE_DIALOG) {
@@ -115,10 +114,8 @@ public class MenuBar extends JMenuBar {
         JMenu aboutMenu = new JMenu("About");
         JMenuItem aboutDeveloperItem = new JMenuItem("Developer");
         JMenuItem aboutProgramItem = new JMenuItem("Program");
-        aboutDeveloperItem
-                .addActionListener(e -> new AboutAuthorDialog(parentFrame));
-        aboutProgramItem
-                .addActionListener(e -> new AboutProgramDialog(parentFrame));
+        aboutDeveloperItem.addActionListener(e -> new AboutAuthorDialog(parentFrame));
+        aboutProgramItem.addActionListener(e -> new AboutProgramDialog(parentFrame));
         aboutMenu.add(aboutDeveloperItem);
         aboutMenu.add(aboutProgramItem);
         return aboutMenu;
