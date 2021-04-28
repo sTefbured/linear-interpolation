@@ -13,10 +13,8 @@ public class LinearInterpolation extends Interpolation {
         double squaredXSum = xValues.stream().mapToDouble(x -> x * x).sum();
         double xSum = xValues.stream().mapToDouble(x -> x).sum();
         double ySum = yValues.stream().mapToDouble(y -> y).sum();
-        double xYSum = DoubleCollectionMapper.crossMap(xValues,
-                yValues, (x, y) -> x * y).sum();
-        setCoefficientA((valuesCount * xYSum - xSum * ySum)
-                / (valuesCount * squaredXSum - xSum * xSum));
+        double xYSum = DoubleCollectionMapper.crossMap(xValues, yValues, (x, y) -> x * y).sum();
+        setCoefficientA((valuesCount * xYSum - xSum * ySum) / (valuesCount * squaredXSum - xSum * xSum));
         setCoefficientB((ySum - getCoefficientA() * xSum) / valuesCount);
     }
 

@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
@@ -42,8 +43,7 @@ public class InitializingPanel extends JPanel implements ObjectUpdateListener {
         fillValueFields(xValues, yValues);
     }
 
-    private void fillValueFields(Collection<Double> xValues,
-                                 Collection<Double> yValues) {
+    private void fillValueFields(Collection<Double> xValues, Collection<Double> yValues) {
         Iterator<Double> xIterator = xValues.iterator();
         Iterator<Double> yIterator = yValues.iterator();
         for (int i = 0; i < xValuesFields.size(); i++) {
@@ -68,7 +68,8 @@ public class InitializingPanel extends JPanel implements ObjectUpdateListener {
     private int getValuesCount() {
         int count;
         try {
-            count = intFormat.parse(valuesCountField.getText()).intValue();
+            String text = valuesCountField.getText();
+            count = intFormat.parse(text).intValue();
             if (count <= 0 || count > MAX_VALUES_COUNT) {
                 throw new NumberFormatException();
             }
@@ -86,6 +87,7 @@ public class InitializingPanel extends JPanel implements ObjectUpdateListener {
         valuesPanel.revalidate();
     }
 
+    // TODO: try to simplify
     private JPanel createValuesPanel(int valuesCount) {
         JPanel valuesPanel = new JPanel();
         valuesPanel.setLayout(new BorderLayout());
@@ -128,8 +130,8 @@ public class InitializingPanel extends JPanel implements ObjectUpdateListener {
 
     private void initializeInterpolation() {
         try {
-            Collection<Double> timeStamps = parseFields(xValuesFields);
-            Collection<Double> temperatures = parseFields(yValuesFields);
+            List<Double> timeStamps = parseFields(xValuesFields);
+            List<Double> temperatures = parseFields(yValuesFields);
             MainFrame.getInterpolation().initialize(timeStamps, temperatures);
             getParent().repaint();
         } catch (ParseException e) {
@@ -137,9 +139,8 @@ public class InitializingPanel extends JPanel implements ObjectUpdateListener {
         }
     }
 
-    private Collection<Double> parseFields(Collection<JTextField> fields)
-            throws ParseException {
-        Collection<Double> values = new ArrayList<>(fields.size());
+    private List<Double> parseFields(Collection<JTextField> fields) throws ParseException {
+        List<Double> values = new ArrayList<>(fields.size());
         for (JTextField f : fields) {
             values.add(parseField(f));
         }

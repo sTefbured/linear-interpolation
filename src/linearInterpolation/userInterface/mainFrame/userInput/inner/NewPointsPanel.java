@@ -11,6 +11,7 @@ import java.awt.geom.Point2D;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Iterator;
+import java.util.List;
 
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
@@ -20,16 +21,16 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
  * for calculating function values and list of result points.
  * Calculation is performed by entering an integer value into test field
  * and pressing "Add" button. Result point will be displayed on chart and
- * its values will be shown in JList.
+ * its values will be shown in list.
  *
  * @author Kotikov S.G.
  */
-// FIXME: prevent adding new similar points
 public class NewPointsPanel extends JPanel implements ObjectUpdateListener {
     private final NumberFormat numberFormat = NumberFormat.getNumberInstance();
     private final JFormattedTextField xField;
     private final JButton addButton;
-    private final JList<Point2D.Double> addedPoints;
+    private final JButton deleteButton;
+    private final JList<Point2D.Double> addedPointsList;
 
     public NewPointsPanel() {
         MainFrame.getInterpolation().addObjectUpdateListener(this);
@@ -37,11 +38,13 @@ public class NewPointsPanel extends JPanel implements ObjectUpdateListener {
         JPanel xFieldPanel = new JPanel(new FlowLayout());
         xField = createXField();
         addButton = createAddButton();
-        addedPoints = new JList<>();
-        addedPoints.setModel(createListModel());
+        deleteButton = createDeleteButton();
+        addedPointsList = new JList<>();
+        addedPointsList.setModel(createListModel());
         setComponentsEnabled(false);
         xFieldPanel.add(xField);
         xFieldPanel.add(addButton);
+        xFieldPanel.add(deleteButton);
         add(xFieldPanel);
         add(createAddedPointsListPanel());
         setBorder(BorderFactory.createTitledBorder("Enter X"));
@@ -52,7 +55,7 @@ public class NewPointsPanel extends JPanel implements ObjectUpdateListener {
         if (MainFrame.getInterpolation().isInitialized()) {
             setComponentsEnabled(true);
         }
-        addedPoints.setModel(createListModel());
+        addedPointsList.setModel(createListModel());
     }
 
     private JFormattedTextField createXField() {
@@ -77,9 +80,19 @@ public class NewPointsPanel extends JPanel implements ObjectUpdateListener {
         return button;
     }
 
+    private JButton createDeleteButton() {
+        JButton button = new JButton("Delete");
+        button.addActionListener(e -> {
+            List<Point2D.Double> selectedPoints = addedPointsList.getSelectedValuesList();
+            Interpolation interpolation = MainFrame.getInterpolation();
+            selectedPoints.forEach(p -> interpolation.removePoint(p.x, p.y));
+        });
+        return button;
+    }
+
     private JPanel createAddedPointsListPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        JScrollPane scrollPane = new JScrollPane(addedPoints,
+        JScrollPane scrollPane = new JScrollPane(addedPointsList,
                 VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(200, 400));
         panel.add(scrollPane, BorderLayout.CENTER);
@@ -109,6 +122,7 @@ public class NewPointsPanel extends JPanel implements ObjectUpdateListener {
         final String tooltipText = "You must input initial values first.";
         xField.setToolTipText(enabled ? "" : tooltipText);
         addButton.setEnabled(enabled);
+        deleteButton.setEnabled(enabled);
     }
 
     // TODO: move to utils class
