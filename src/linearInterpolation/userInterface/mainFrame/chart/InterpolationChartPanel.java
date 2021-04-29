@@ -18,9 +18,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseListener;
 import java.awt.geom.Ellipse2D;
-import java.util.Collection;
-import java.util.EventListener;
-import java.util.Iterator;
+import java.util.*;
+import java.util.List;
 
 public class InterpolationChartPanel extends JPanel implements ObjectUpdateListener {
     public final int INTERPOLATED_POINTS_INDEX = 0;
@@ -31,14 +30,17 @@ public class InterpolationChartPanel extends JPanel implements ObjectUpdateListe
     private final String INTERPOLATED_POINTS_KEY = "Interpolated points";
 
     private final DefaultXYDataset dataset;
-
-    private XYSeries initialPointsSeries;
-    private XYSeries interpolatedLineSeries;
-    private XYSeries interpolatedPointsSeries;
+    private final XYSeries initialPointsSeries;
+    private final XYSeries interpolatedLineSeries;
+    private final XYSeries interpolatedPointsSeries;
 
     public InterpolationChartPanel() {
         MainFrame.getInterpolation().addObjectUpdateListener(this);
-        dataset = createDataset();
+        dataset = new DefaultXYDataset();
+        initialPointsSeries = new XYSeries(INITIAL_POINTS_KEY);
+        interpolatedLineSeries = new XYSeries(INTERPOLATED_LINE_KEY);
+        interpolatedPointsSeries = new XYSeries(INTERPOLATED_POINTS_KEY);
+        addAllSeries();
         JFreeChart chart = createChart(dataset);
         ChartPanel panel = new ChartPanel(chart);
         EventListener[] listeners = panel.getListeners(MouseListener.class);
@@ -49,17 +51,6 @@ public class InterpolationChartPanel extends JPanel implements ObjectUpdateListe
         add(panel);
     }
 
-    private DefaultXYDataset createDataset() {
-        DefaultXYDataset dataset = new DefaultXYDataset();
-        initialPointsSeries = new XYSeries(INITIAL_POINTS_KEY);
-        interpolatedLineSeries = new XYSeries(INTERPOLATED_LINE_KEY);
-        interpolatedPointsSeries = new XYSeries(INTERPOLATED_POINTS_KEY);
-        dataset.addSeries(INITIAL_POINTS_KEY, initialPointsSeries.toArray());
-        dataset.addSeries(INTERPOLATED_LINE_KEY, interpolatedLineSeries.toArray());
-        dataset.addSeries(INTERPOLATED_POINTS_KEY, interpolatedPointsSeries.toArray());
-        return dataset;
-    }
-
     private JFreeChart createChart(XYDataset dataset) {
         JFreeChart chart = ChartFactory.createXYLineChart("Cooling function",
                 "time, hour", "temperature, K", dataset);
@@ -68,9 +59,9 @@ public class InterpolationChartPanel extends JPanel implements ObjectUpdateListe
         XYPlot plot = chart.getXYPlot();
         configurePlot(plot);
 
-        XYItemRenderer r = plot.getRenderer();
-        if (r instanceof XYLineAndShapeRenderer) {
-            configureRenderer((XYLineAndShapeRenderer) r);
+        XYItemRenderer renderer = plot.getRenderer();
+        if (renderer instanceof XYLineAndShapeRenderer) {
+            configureRenderer((XYLineAndShapeRenderer) renderer);
         }
         return chart;
     }
@@ -115,41 +106,57 @@ public class InterpolationChartPanel extends JPanel implements ObjectUpdateListe
         renderer.setSeriesShapesFilled(seriesIndex, true);
     }
 
-    // TODO: pay attention. Maybe should simplify
     @Override
-    @SuppressWarnings("All")
     public void update(ObjectUpdateEvent event) {
+        removeAllSeries();
+        clearAllSeries();
+        initializeAllSeries();
+        addAllSeries();
+        repaint();
+    }
+
+    @SuppressWarnings("all")
+    private void initializeAllSeries() {
         Interpolation interpolation = MainFrame.getInterpolation();
-        Collection<Double> xValues = interpolation.getXValues();
-        Collection<Double> yValues = interpolation.getYValues();
-        Collection<Double> interpolatedX = interpolation.getXInterpolated();
-        Collection<Double> interpolatedY = interpolation.getYInterpolated();
+        List<Double> xValues = interpolation.getXValues();
+        List<Double> yValues = interpolation.getYValues();
+        List<Double> interpolatedX = interpolation.getXInterpolated();
+        List<Double> interpolatedY = interpolation.getYInterpolated();
 
-        // Remove old values
-        initialPointsSeries.clear();
-        interpolatedLineSeries.clear();
-        interpolatedPointsSeries.clear();
-
-        // Add new values
-        Iterator<Double> yIterator = yValues.iterator();
-        xValues.forEach(x -> initialPointsSeries.add(x, yIterator.next()));
-        double x1 = xValues.stream().min(Double::compare).get();
-        double x2 = xValues.stream().max(Double::compare).get();
+        Optional<Double> interpolatedX1 = interpolatedX.stream().min(Double::compare);
+        Optional<Double> interpolatedX2 = interpolatedX.stream().max(Double::compare);
+        double minXValue = xValues.stream().min(Double::compare).get();
+        double maxXValue = xValues.stream().max(Double::compare).get();
+        double x1 = interpolatedX1.map(aDouble -> Math.min(minXValue, aDouble)).orElse(minXValue);
+        double x2 = interpolatedX2.map(aDouble -> Math.max(maxXValue, aDouble)).orElse(maxXValue);
         double y1 = interpolation.calculateFunctionValue(x1);
         double y2 = interpolation.calculateFunctionValue(x2);
+
         interpolatedLineSeries.add(x1, y1);
         interpolatedLineSeries.add(x2, y2);
 
+        Iterator<Double> yIterator = yValues.iterator();
+        xValues.forEach(x -> initialPointsSeries.add(x, yIterator.next()));
+
         Iterator<Double> yInterpolatedIterator = interpolatedY.iterator();
         interpolatedX.forEach(x -> interpolatedPointsSeries.add(x, yInterpolatedIterator.next()));
+    }
 
+    private void clearAllSeries() {
+        initialPointsSeries.clear();
+        interpolatedLineSeries.clear();
+        interpolatedPointsSeries.clear();
+    }
+
+    private void removeAllSeries() {
         dataset.removeSeries(INITIAL_POINTS_KEY);
         dataset.removeSeries(INTERPOLATED_LINE_KEY);
         dataset.removeSeries(INTERPOLATED_POINTS_KEY);
+    }
 
+    private void addAllSeries() {
         dataset.addSeries(INTERPOLATED_POINTS_KEY, interpolatedPointsSeries.toArray());
         dataset.addSeries(INITIAL_POINTS_KEY, initialPointsSeries.toArray());
         dataset.addSeries(INTERPOLATED_LINE_KEY, interpolatedLineSeries.toArray());
-        repaint();
     }
 }

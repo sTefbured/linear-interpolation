@@ -32,7 +32,8 @@ public class MainFrame extends JFrame {
         add(chartPanel);
         setLayout(new GridLayout(1, 2));
         setJMenuBar(new MenuBar(this));
-        setSize(960, 540);
+        setMinimumSize(new Dimension(960, 540));
+        setSize(getMinimumSize());
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
