@@ -26,8 +26,7 @@ public abstract class Interpolation implements Serializable {
         yValues = new ArrayList<>();
     }
 
-    public void initialize(List<Double> xValues,
-                           List<Double> yValues) {
+    public void initialize(List<Double> xValues, List<Double> yValues) {
         if (xValues.size() != yValues.size()) {
             throw new IllegalArgumentException("X count must be equal to Y count");
         }

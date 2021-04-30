@@ -18,8 +18,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseListener;
 import java.awt.geom.Ellipse2D;
-import java.util.*;
-import java.util.List;
+import java.util.Collections;
+import java.util.EventListener;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class InterpolationChartPanel extends JPanel implements ObjectUpdateListener {
     public final int INTERPOLATED_POINTS_INDEX = 0;
@@ -115,31 +117,30 @@ public class InterpolationChartPanel extends JPanel implements ObjectUpdateListe
         repaint();
     }
 
-    @SuppressWarnings("all")
     private void initializeAllSeries() {
         Interpolation interpolation = MainFrame.getInterpolation();
-        List<Double> xValues = interpolation.getXValues();
-        List<Double> yValues = interpolation.getYValues();
-        List<Double> interpolatedX = interpolation.getXInterpolated();
-        List<Double> interpolatedY = interpolation.getYInterpolated();
-
-        Optional<Double> interpolatedX1 = interpolatedX.stream().min(Double::compare);
-        Optional<Double> interpolatedX2 = interpolatedX.stream().max(Double::compare);
-        double minXValue = xValues.stream().min(Double::compare).get();
-        double maxXValue = xValues.stream().max(Double::compare).get();
-        double x1 = interpolatedX1.map(aDouble -> Math.min(minXValue, aDouble)).orElse(minXValue);
-        double x2 = interpolatedX2.map(aDouble -> Math.max(maxXValue, aDouble)).orElse(maxXValue);
-        double y1 = interpolation.calculateFunctionValue(x1);
-        double y2 = interpolation.calculateFunctionValue(x2);
-
-        interpolatedLineSeries.add(x1, y1);
-        interpolatedLineSeries.add(x2, y2);
-
-        Iterator<Double> yIterator = yValues.iterator();
-        xValues.forEach(x -> initialPointsSeries.add(x, yIterator.next()));
-
-        Iterator<Double> yInterpolatedIterator = interpolatedY.iterator();
-        interpolatedX.forEach(x -> interpolatedPointsSeries.add(x, yInterpolatedIterator.next()));
+        double minTimeValue = Collections.min(interpolation.getXValues());
+        double maxTimeValue = Collections.max(interpolation.getXValues());
+        double time1;
+        double time2;
+        try {
+            double interpolatedMinTime = Collections.min(interpolation.getXInterpolated());
+            double interpolatedMaxTime = Collections.max(interpolation.getXInterpolated());
+            time1 = Math.min(minTimeValue, interpolatedMinTime);
+            time2 = Math.max(maxTimeValue, interpolatedMaxTime);
+        } catch (NoSuchElementException exception) {
+            time1 = minTimeValue;
+            time2 = maxTimeValue;
+        }
+        double temperature1 = interpolation.calculateFunctionValue(time1);
+        double temperature2 = interpolation.calculateFunctionValue(time2);
+        interpolatedLineSeries.add(time1, temperature1);
+        interpolatedLineSeries.add(time2, temperature2);
+        Iterator<Double> temperatureIterator = interpolation.getYValues().iterator();
+        interpolation.getXValues().forEach(x -> initialPointsSeries.add(x, temperatureIterator.next()));
+        Iterator<Double> temperatureInterpolatedIterator = interpolation.getYInterpolated().iterator();
+        interpolation.getXInterpolated()
+                .forEach(x -> interpolatedPointsSeries.add(x, temperatureInterpolatedIterator.next()));
     }
 
     private void clearAllSeries() {
