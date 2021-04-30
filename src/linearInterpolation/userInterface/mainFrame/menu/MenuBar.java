@@ -109,7 +109,6 @@ public class MenuBar extends JMenuBar {
         }
     }
 
-    // TODO: fill listeners
     private JMenu createAboutMenu() {
         JMenu aboutMenu = new JMenu("About");
         JMenuItem aboutDeveloperItem = new JMenuItem("Developer");

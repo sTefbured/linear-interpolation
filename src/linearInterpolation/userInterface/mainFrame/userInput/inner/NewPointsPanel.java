@@ -27,7 +27,7 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
  */
 public class NewPointsPanel extends JPanel implements ObjectUpdateListener {
     private final NumberFormat numberFormat = NumberFormat.getNumberInstance();
-    private final JFormattedTextField xField;
+    private final JFormattedTextField timeField;
     private final JButton addButton;
     private final JButton deleteButton;
     private final JList<Point2D.Double> addedPointsList;
@@ -35,19 +35,19 @@ public class NewPointsPanel extends JPanel implements ObjectUpdateListener {
     public NewPointsPanel() {
         MainFrame.getInterpolation().addObjectUpdateListener(this);
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        JPanel xFieldPanel = new JPanel(new FlowLayout());
-        xField = createXField();
+        JPanel timeFieldPanel = new JPanel(new FlowLayout());
+        timeField = createTimeField();
         addButton = createAddButton();
         deleteButton = createDeleteButton();
         addedPointsList = new JList<>();
         addedPointsList.setModel(createListModel());
         setComponentsEnabled(false);
-        xFieldPanel.add(xField);
-        xFieldPanel.add(addButton);
-        xFieldPanel.add(deleteButton);
-        add(xFieldPanel);
+        timeFieldPanel.add(timeField);
+        timeFieldPanel.add(addButton);
+        timeFieldPanel.add(deleteButton);
+        add(timeFieldPanel);
         add(createAddedPointsListPanel());
-        setBorder(BorderFactory.createTitledBorder("Enter X"));
+        setBorder(BorderFactory.createTitledBorder("Enter time"));
     }
 
     @Override
@@ -58,7 +58,7 @@ public class NewPointsPanel extends JPanel implements ObjectUpdateListener {
         addedPointsList.setModel(createListModel());
     }
 
-    private JFormattedTextField createXField() {
+    private JFormattedTextField createTimeField() {
         JFormattedTextField field = new JFormattedTextField(numberFormat);
         field.setColumns(5);
         return field;
@@ -68,7 +68,7 @@ public class NewPointsPanel extends JPanel implements ObjectUpdateListener {
         JButton button = new JButton("Add");
         button.addActionListener(e -> {
             try {
-                MainFrame.getInterpolation().addPoint(parseField(xField));
+                MainFrame.getInterpolation().addPoint(parseField(timeField));
             } catch (ParseException parseException) {
                 JOptionPane.showMessageDialog(
                         this,
@@ -101,15 +101,15 @@ public class NewPointsPanel extends JPanel implements ObjectUpdateListener {
 
     private DefaultListModel<Point2D.Double> createListModel() {
         Interpolation interpolation = MainFrame.getInterpolation();
-        Iterable<Double> xValues = interpolation.getXInterpolated();
-        Iterable<Double> yValues = interpolation.getYInterpolated();
-        Iterator<Double> yIterator = yValues.iterator();
+        Iterable<Double> timeValues = interpolation.getXInterpolated();
+        Iterable<Double> temperatureValues = interpolation.getYInterpolated();
+        Iterator<Double> temperatureIterator = temperatureValues.iterator();
         DefaultListModel<Point2D.Double> dataModel = new DefaultListModel<>();
-        xValues.forEach(x -> {
-            Point2D.Double point = new Point2D.Double(x, yIterator.next()) {
+        timeValues.forEach(x -> {
+            Point2D.Double point = new Point2D.Double(x, temperatureIterator.next()) {
                 @Override
                 public String toString() {
-                    return String.format("X: %.3f  Y: %.3f", getX(), getY());
+                    return String.format("Time: %.3f  Temperature: %.3f", getX(), getY());
                 }
             };
             dataModel.add(dataModel.size(), point);
@@ -118,9 +118,9 @@ public class NewPointsPanel extends JPanel implements ObjectUpdateListener {
     }
 
     private void setComponentsEnabled(boolean enabled) {
-        xField.setEditable(enabled);
+        timeField.setEditable(enabled);
         final String tooltipText = "You must input initial values first.";
-        xField.setToolTipText(enabled ? "" : tooltipText);
+        timeField.setToolTipText(enabled ? "" : tooltipText);
         addButton.setEnabled(enabled);
         deleteButton.setEnabled(enabled);
     }

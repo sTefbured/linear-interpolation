@@ -9,8 +9,8 @@ import java.net.URL;
 import static java.awt.Image.SCALE_FAST;
 
 /**
- * A SplashScreen is an extended version of JFrame that shows
- * information about the project while the MainFrame is creating.
+ * A SplashScreen is an extended version of JFrame that shown while the MainFrame is creating.
+ * Contains information about the project, "Next" and "Exit" buttons.
  *
  * @author Kotikov S.G.
  */

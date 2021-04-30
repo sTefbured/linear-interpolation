@@ -22,9 +22,9 @@ public class InitializingPanel extends JPanel implements ObjectUpdateListener {
     private final NumberFormat intFormat = NumberFormat.getIntegerInstance();
     public final int defaultValuesCount = 5;
 
-    private ArrayList<JTextField> xValuesFields;
-    private ArrayList<JTextField> yValuesFields;
     private JFormattedTextField valuesCountField;
+    private ArrayList<JTextField> timeValuesFields;
+    private ArrayList<JTextField> temperatureValuesFields;
     private JPanel valuesPanel;
 
     public InitializingPanel() {
@@ -37,18 +37,18 @@ public class InitializingPanel extends JPanel implements ObjectUpdateListener {
 
     @Override
     public void update(ObjectUpdateEvent event) {
-        Collection<Double> xValues = MainFrame.getInterpolation().getXValues();
-        Collection<Double> yValues = MainFrame.getInterpolation().getYValues();
-        updateValuesPanel(xValues.size());
-        fillValueFields(xValues, yValues);
+        Collection<Double> timeValues = MainFrame.getInterpolation().getXValues();
+        Collection<Double> temperatureValues = MainFrame.getInterpolation().getYValues();
+        updateValuesPanel(timeValues.size());
+        fillValueFields(timeValues, temperatureValues);
     }
 
-    private void fillValueFields(Collection<Double> xValues, Collection<Double> yValues) {
-        Iterator<Double> xIterator = xValues.iterator();
-        Iterator<Double> yIterator = yValues.iterator();
-        for (int i = 0; i < xValuesFields.size(); i++) {
-            xValuesFields.get(i).setText(xIterator.next().toString());
-            yValuesFields.get(i).setText(yIterator.next().toString());
+    private void fillValueFields(Collection<Double> timeValues, Collection<Double> temperatureValues) {
+        Iterator<Double> timeIterator = timeValues.iterator();
+        Iterator<Double> temperatureIterator = temperatureValues.iterator();
+        for (int i = 0; i < timeValuesFields.size(); i++) {
+            timeValuesFields.get(i).setText(timeIterator.next().toString());
+            temperatureValuesFields.get(i).setText(temperatureIterator.next().toString());
         }
     }
 
@@ -98,28 +98,28 @@ public class InitializingPanel extends JPanel implements ObjectUpdateListener {
                 VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(200, 300));
 
-        JPanel xLabelPanel = new JPanel();
-        JPanel yLabelPanel = new JPanel();
-        xLabelPanel.add(new JLabel("Time"));
-        yLabelPanel.add(new JLabel("Temperature"));
-        fieldsPanel.add(xLabelPanel);
-        fieldsPanel.add(yLabelPanel);
-        xValuesFields = new ArrayList<>(valuesCount);
-        yValuesFields = new ArrayList<>(valuesCount);
+        JPanel timeLabelPanel = new JPanel();
+        JPanel temperatureLabelPanel = new JPanel();
+        timeLabelPanel.add(new JLabel("Time"));
+        temperatureLabelPanel.add(new JLabel("Temperature"));
+        fieldsPanel.add(timeLabelPanel);
+        fieldsPanel.add(temperatureLabelPanel);
+        timeValuesFields = new ArrayList<>(valuesCount);
+        temperatureValuesFields = new ArrayList<>(valuesCount);
 
         for (int i = 0; i < valuesCount; i++) {
-            JFormattedTextField xField = new JFormattedTextField(numberFormat);
-            JFormattedTextField yField = new JFormattedTextField(numberFormat);
-            xField.setColumns(5);
-            yField.setColumns(5);
-            JPanel xPanel = new JPanel();
-            JPanel yPanel = new JPanel();
-            xPanel.add(xField);
-            yPanel.add(yField);
-            xValuesFields.add(xField);
-            yValuesFields.add(yField);
-            fieldsPanel.add(xPanel);
-            fieldsPanel.add(yPanel);
+            JFormattedTextField timeField = new JFormattedTextField(numberFormat);
+            JFormattedTextField temperatureField = new JFormattedTextField(numberFormat);
+            timeField.setColumns(5);
+            temperatureField.setColumns(5);
+            JPanel timePanel = new JPanel();
+            JPanel temperaturePanel = new JPanel();
+            timePanel.add(timeField);
+            temperaturePanel.add(temperatureField);
+            timeValuesFields.add(timeField);
+            temperatureValuesFields.add(temperatureField);
+            fieldsPanel.add(timePanel);
+            fieldsPanel.add(temperaturePanel);
         }
         JButton initializeButton = new JButton("Initialize");
         initializeButton.addActionListener(e -> initializeInterpolation());
@@ -130,8 +130,8 @@ public class InitializingPanel extends JPanel implements ObjectUpdateListener {
 
     private void initializeInterpolation() {
         try {
-            List<Double> timeStamps = parseFields(xValuesFields);
-            List<Double> temperatures = parseFields(yValuesFields);
+            List<Double> timeStamps = parseFields(timeValuesFields);
+            List<Double> temperatures = parseFields(temperatureValuesFields);
             MainFrame.getInterpolation().initialize(timeStamps, temperatures);
             getParent().repaint();
         } catch (ParseException e) {

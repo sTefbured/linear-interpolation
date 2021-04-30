@@ -6,7 +6,6 @@ import linearInterpolation.model.listener.ObjectUpdateListener;
 import javax.swing.event.EventListenerList;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public abstract class Interpolation implements Serializable {
@@ -27,8 +26,7 @@ public abstract class Interpolation implements Serializable {
         yValues = new ArrayList<>();
     }
 
-    public void initialize(List<Double> xValues,
-                           List<Double> yValues) {
+    public void initialize(List<Double> xValues, List<Double> yValues) {
         if (xValues.size() != yValues.size()) {
             throw new IllegalArgumentException("X count must be equal to Y count");
         }
@@ -84,11 +82,11 @@ public abstract class Interpolation implements Serializable {
         return xValues.isEmpty() || yValues.isEmpty();
     }
 
-    public Collection<Double> getXValues() {
+    public List<Double> getXValues() {
         return xValues;
     }
 
-    public Collection<Double> getYValues() {
+    public List<Double> getYValues() {
         return yValues;
     }
 
@@ -108,11 +106,11 @@ public abstract class Interpolation implements Serializable {
         this.coefficientB = coefficientB;
     }
 
-    public Collection<Double> getXInterpolated() {
+    public List<Double> getXInterpolated() {
         return xInterpolated;
     }
 
-    public Collection<Double> getYInterpolated() {
+    public List<Double> getYInterpolated() {
         return yInterpolated;
     }
 }
