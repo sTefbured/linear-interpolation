@@ -24,8 +24,8 @@ public class SplashScreen extends JFrame {
     private MainFrame mainFrame;
 
     /**
-     * Creates visible SplashScreen frame and starts MainFrame creating
-     * in parallel thread.
+     * Starts a parallel thread, where MainFrame is being created,
+     * creates visible SplashScreen object and runs timer.
      */
     public SplashScreen() {
         mainFrameThread = new Thread(() -> mainFrame = new MainFrame());

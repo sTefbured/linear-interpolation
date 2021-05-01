@@ -1,8 +1,8 @@
 package linearInterpolation.userInterface.mainFrame.userInput.inner;
 
 import linearInterpolation.model.Interpolation;
-import linearInterpolation.model.event.ObjectUpdateEvent;
-import linearInterpolation.model.listener.ObjectUpdateListener;
+import linearInterpolation.model.event.InterpolationUpdateEvent;
+import linearInterpolation.model.listener.InterpolationUpdateListener;
 import linearInterpolation.userInterface.mainFrame.MainFrame;
 
 import javax.swing.*;
@@ -13,27 +13,36 @@ import java.text.ParseException;
 import java.util.Iterator;
 import java.util.List;
 
-import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
+import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 
 /**
  * NewPointsPanel is an extension of JPanel that contains UI components
  * for calculating function values and list of result points.
- * Calculation is performed by entering an integer value into test field
- * and pressing "Add" button. Result point will be displayed on chart and
- * its values will be shown in list.
+ * Calculation is performed by entering an decimal value into text field
+ * and pressing "Add" button. Result point will be displayed in the list.
+ * <p>
+ * This panel implements InterpolationUpdateListener, because it needs to be updated,
+ * when new points are created in current Interpolation object.
  *
  * @author Kotikov S.G.
  */
-public class NewPointsPanel extends JPanel implements ObjectUpdateListener {
+public class NewPointsPanel extends JPanel implements InterpolationUpdateListener {
     private final NumberFormat numberFormat = NumberFormat.getNumberInstance();
     private final JFormattedTextField timeField;
     private final JButton addButton;
     private final JButton deleteButton;
     private final JList<Point2D.Double> addedPointsList;
 
+    /**
+     * Creates a NewPointsPanel object and adds it to listeners list of current Interpolation.
+     * In result panel contains text field for time values, add/delete buttons and JList of
+     * added points.
+     */
     public NewPointsPanel() {
-        MainFrame.getInterpolation().addObjectUpdateListener(this);
+        // Add the panel as a listener to current Interpolation object
+        MainFrame.getInterpolation().addInterpolationUpdateListener(this);
+
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         JPanel timeFieldPanel = new JPanel(new FlowLayout());
         timeField = createTimeField();
@@ -50,11 +59,19 @@ public class NewPointsPanel extends JPanel implements ObjectUpdateListener {
         setBorder(BorderFactory.createTitledBorder("Enter time"));
     }
 
+    /**
+     * Updates JList of added points and if current interpolation object
+     * is initialized, sets input components enabled.
+     *
+     * @param event
+     */
     @Override
-    public void update(ObjectUpdateEvent event) {
+    public void update(InterpolationUpdateEvent event) {
         if (MainFrame.getInterpolation().isInitialized()) {
             setComponentsEnabled(true);
         }
+
+        //TODO: stop recreating all the time!!! Should update instead.
         addedPointsList.setModel(createListModel());
     }
 
@@ -93,7 +110,7 @@ public class NewPointsPanel extends JPanel implements ObjectUpdateListener {
     private JPanel createAddedPointsListPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         JScrollPane scrollPane = new JScrollPane(addedPointsList,
-                VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_NEVER);
+                VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollPane.setPreferredSize(new Dimension(200, 400));
         panel.add(scrollPane, BorderLayout.CENTER);
         return panel;
@@ -109,7 +126,7 @@ public class NewPointsPanel extends JPanel implements ObjectUpdateListener {
             Point2D.Double point = new Point2D.Double(x, temperatureIterator.next()) {
                 @Override
                 public String toString() {
-                    return String.format("Time: %.3f  Temperature: %.3f", getX(), getY());
+                    return String.format("Time: %.3f Temperature: %.3f", getX(), getY());
                 }
             };
             dataModel.add(dataModel.size(), point);
