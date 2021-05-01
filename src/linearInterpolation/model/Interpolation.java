@@ -1,7 +1,7 @@
 package linearInterpolation.model;
 
-import linearInterpolation.model.event.ObjectUpdateEvent;
-import linearInterpolation.model.listener.ObjectUpdateListener;
+import linearInterpolation.model.event.InterpolationUpdateEvent;
+import linearInterpolation.model.listener.InterpolationUpdateListener;
 
 import javax.swing.event.EventListenerList;
 import java.io.Serializable;
@@ -11,7 +11,7 @@ import java.util.List;
 public abstract class Interpolation implements Serializable {
     private static final long serialVersionUID = 360822176844365239L;
 
-    private transient EventListenerList listeners;
+    private transient EventListenerList listenersList;
     private List<Double> xValues;
     private List<Double> yValues;
     private final List<Double> xInterpolated;
@@ -60,16 +60,17 @@ public abstract class Interpolation implements Serializable {
         notifyObjectUpdateListeners();
     }
 
-    public void addObjectUpdateListener(ObjectUpdateListener listener) {
-        if (listeners == null) {
-            listeners = new EventListenerList();
+    public void addInterpolationUpdateListener(InterpolationUpdateListener listener) {
+        if (listenersList == null) {
+            listenersList = new EventListenerList();
         }
-        listeners.add(ObjectUpdateListener.class, listener);
+        listenersList.add(InterpolationUpdateListener.class, listener);
     }
 
     public void notifyObjectUpdateListeners() {
-        ObjectUpdateEvent event = new ObjectUpdateEvent(this);
-        for (ObjectUpdateListener listener : listeners.getListeners(ObjectUpdateListener.class)) {
+        InterpolationUpdateEvent event = new InterpolationUpdateEvent(this);
+        InterpolationUpdateListener[] listeners = listenersList.getListeners(InterpolationUpdateListener.class);
+        for (InterpolationUpdateListener listener : listeners) {
             listener.update(event);
         }
     }
@@ -90,6 +91,14 @@ public abstract class Interpolation implements Serializable {
         return yValues;
     }
 
+    public List<Double> getXInterpolated() {
+        return xInterpolated;
+    }
+
+    public List<Double> getYInterpolated() {
+        return yInterpolated;
+    }
+
     public double getCoefficientA() {
         return coefficientA;
     }
@@ -104,13 +113,5 @@ public abstract class Interpolation implements Serializable {
 
     protected void setCoefficientB(double coefficientB) {
         this.coefficientB = coefficientB;
-    }
-
-    public List<Double> getXInterpolated() {
-        return xInterpolated;
-    }
-
-    public List<Double> getYInterpolated() {
-        return yInterpolated;
     }
 }

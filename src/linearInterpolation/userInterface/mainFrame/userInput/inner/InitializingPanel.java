@@ -1,13 +1,12 @@
 package linearInterpolation.userInterface.mainFrame.userInput.inner;
 
-import linearInterpolation.model.event.ObjectUpdateEvent;
-import linearInterpolation.model.listener.ObjectUpdateListener;
+import linearInterpolation.model.event.InterpolationUpdateEvent;
+import linearInterpolation.model.listener.InterpolationUpdateListener;
 import linearInterpolation.userInterface.mainFrame.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
-import java.text.NumberFormat;
-import java.text.ParseException;
+import java.text.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -16,11 +15,14 @@ import java.util.List;
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 
-public class InitializingPanel extends JPanel implements ObjectUpdateListener {
+
+// TODO: finish formatter, maybe move to a new class, or simplify
+public class InitializingPanel extends JPanel implements InterpolationUpdateListener {
     public final int MAX_VALUES_COUNT = 125;
-    private final NumberFormat numberFormat = NumberFormat.getNumberInstance();
-    private final NumberFormat intFormat = NumberFormat.getIntegerInstance();
     public final int defaultValuesCount = 5;
+
+    private final NumberFormat numberFormat;
+    private final NumberFormat intFormat = NumberFormat.getIntegerInstance();
 
     private JFormattedTextField valuesCountField;
     private ArrayList<JTextField> timeValuesFields;
@@ -28,6 +30,18 @@ public class InitializingPanel extends JPanel implements ObjectUpdateListener {
     private JPanel valuesPanel;
 
     public InitializingPanel() {
+        numberFormat = new DecimalFormat() {
+            @Override
+            public Number parse(String source, ParsePosition parsePosition) {
+                Number number = super.parse(source, parsePosition);
+                if (number == null || number.doubleValue() < 0) {
+                    parsePosition.setIndex(source.length());
+                    parsePosition.setErrorIndex(-1);
+                    number = null;
+                }
+                return number;
+            }
+        };
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createTitledBorder("Initial values"));
         add(createCountPanel());
@@ -36,7 +50,7 @@ public class InitializingPanel extends JPanel implements ObjectUpdateListener {
     }
 
     @Override
-    public void update(ObjectUpdateEvent event) {
+    public void update(InterpolationUpdateEvent event) {
         Collection<Double> timeValues = MainFrame.getInterpolation().getXValues();
         Collection<Double> temperatureValues = MainFrame.getInterpolation().getYValues();
         updateValuesPanel(timeValues.size());

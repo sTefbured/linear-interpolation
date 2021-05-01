@@ -2,6 +2,7 @@ package linearInterpolation.userInterface.mainFrame;
 
 import linearInterpolation.model.Interpolation;
 import linearInterpolation.model.LinearInterpolation;
+import linearInterpolation.model.listener.InterpolationUpdateListener;
 import linearInterpolation.userInterface.mainFrame.chart.InterpolationChartPanel;
 import linearInterpolation.userInterface.mainFrame.menu.MenuBar;
 import linearInterpolation.userInterface.mainFrame.userInput.InputPanel;
@@ -39,17 +40,16 @@ public class MainFrame extends JFrame {
     }
 
     /**
-     * Sets new value for interpolation field,
-     * adds ObjectUpdateListener objects to it.
+     * Sets a new value for interpolation field, and adds listeners to it.
      *
      * @param interpolation new instance of Interpolation
-     * @see linearInterpolation.model.listener.ObjectUpdateListener
+     * @see InterpolationUpdateListener
      */
     public static void setInterpolation(Interpolation interpolation) {
         MainFrame.interpolation = interpolation;
-        interpolation.addObjectUpdateListener(inputPanel.getInitializingPanel());
-        interpolation.addObjectUpdateListener(inputPanel.getNewPointsPanel());
-        interpolation.addObjectUpdateListener(chartPanel);
+        interpolation.addInterpolationUpdateListener(inputPanel.getInitializingPanel());
+        interpolation.addInterpolationUpdateListener(inputPanel.getNewPointsPanel());
+        interpolation.addInterpolationUpdateListener(chartPanel);
         interpolation.notifyObjectUpdateListeners();
     }
 

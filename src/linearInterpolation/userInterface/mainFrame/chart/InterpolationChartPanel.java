@@ -1,8 +1,8 @@
 package linearInterpolation.userInterface.mainFrame.chart;
 
 import linearInterpolation.model.Interpolation;
-import linearInterpolation.model.event.ObjectUpdateEvent;
-import linearInterpolation.model.listener.ObjectUpdateListener;
+import linearInterpolation.model.event.InterpolationUpdateEvent;
+import linearInterpolation.model.listener.InterpolationUpdateListener;
 import linearInterpolation.userInterface.mainFrame.MainFrame;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -23,7 +23,7 @@ import java.util.EventListener;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class InterpolationChartPanel extends JPanel implements ObjectUpdateListener {
+public class InterpolationChartPanel extends JPanel implements InterpolationUpdateListener {
     public final int INTERPOLATED_POINTS_INDEX = 0;
     public final int INITIAL_POINTS_INDEX = 1;
     public final int INTERPOLATED_LINE_INDEX = 2;
@@ -37,7 +37,7 @@ public class InterpolationChartPanel extends JPanel implements ObjectUpdateListe
     private final XYSeries interpolatedPointsSeries;
 
     public InterpolationChartPanel() {
-        MainFrame.getInterpolation().addObjectUpdateListener(this);
+        MainFrame.getInterpolation().addInterpolationUpdateListener(this);
         dataset = new DefaultXYDataset();
         initialPointsSeries = new XYSeries(INITIAL_POINTS_KEY);
         interpolatedLineSeries = new XYSeries(INTERPOLATED_LINE_KEY);
@@ -53,6 +53,15 @@ public class InterpolationChartPanel extends JPanel implements ObjectUpdateListe
         add(panel);
     }
 
+    @Override
+    public void update(InterpolationUpdateEvent event) {
+        removeAllSeries();
+        clearAllSeries();
+        initializeAllSeries();
+        addAllSeries();
+        repaint();
+    }
+
     private JFreeChart createChart(XYDataset dataset) {
         JFreeChart chart = ChartFactory.createXYLineChart("Cooling function",
                 "time, hour", "temperature, K", dataset);
@@ -66,24 +75,6 @@ public class InterpolationChartPanel extends JPanel implements ObjectUpdateListe
             configureRenderer((XYLineAndShapeRenderer) renderer);
         }
         return chart;
-    }
-
-    private void configurePlot(XYPlot plot) {
-        plot.setBackgroundPaint(Color.LIGHT_GRAY);
-        plot.setDomainMinorGridlinePaint(Color.BLUE);
-        plot.setRangeMinorGridlinePaint(Color.BLUE);
-        plot.setDomainGridlinePaint(Color.BLACK);
-        plot.setRangeGridlinePaint(Color.BLACK);
-        plot.setDomainGridlinesVisible(true);
-        plot.setRangeGridlinesVisible(true);
-        plot.setDomainCrosshairStroke(new BasicStroke(3));
-        plot.setRangeCrosshairStroke(new BasicStroke(3));
-        plot.setDomainCrosshairPaint(new Color(0, 0, 0, 100));
-        plot.setRangeCrosshairPaint(new Color(0, 0, 0, 100));
-        plot.setDomainCrosshairLockedOnData(true);
-        plot.setRangeCrosshairLockedOnData(true);
-        plot.setDomainCrosshairVisible(true);
-        plot.setRangeCrosshairVisible(true);
     }
 
     private void configureRenderer(XYLineAndShapeRenderer renderer) {
@@ -108,13 +99,22 @@ public class InterpolationChartPanel extends JPanel implements ObjectUpdateListe
         renderer.setSeriesShapesFilled(seriesIndex, true);
     }
 
-    @Override
-    public void update(ObjectUpdateEvent event) {
-        removeAllSeries();
-        clearAllSeries();
-        initializeAllSeries();
-        addAllSeries();
-        repaint();
+    private void configurePlot(XYPlot plot) {
+        plot.setBackgroundPaint(Color.LIGHT_GRAY);
+        plot.setDomainMinorGridlinePaint(Color.BLUE);
+        plot.setRangeMinorGridlinePaint(Color.BLUE);
+        plot.setDomainGridlinePaint(Color.BLACK);
+        plot.setRangeGridlinePaint(Color.BLACK);
+        plot.setDomainGridlinesVisible(true);
+        plot.setRangeGridlinesVisible(true);
+        plot.setDomainCrosshairStroke(new BasicStroke(3));
+        plot.setRangeCrosshairStroke(new BasicStroke(3));
+        plot.setDomainCrosshairPaint(new Color(0, 0, 0, 100));
+        plot.setRangeCrosshairPaint(new Color(0, 0, 0, 100));
+        plot.setDomainCrosshairLockedOnData(true);
+        plot.setRangeCrosshairLockedOnData(true);
+        plot.setDomainCrosshairVisible(true);
+        plot.setRangeCrosshairVisible(true);
     }
 
     private void initializeAllSeries() {
