@@ -7,8 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * InputPanel is an extended version of JPanel that contains InitializingPanel
- * and NewPointsPanel objects.
+ * <code>InputPanel</code> is an extended version of <code>JPanel</code>
+ * that contains <code>InitializingPanel</code> and <code>NewPointsPanel</code> objects.
  *
  * @author Kotikov S.G.
  */
@@ -17,8 +17,8 @@ public class InputPanel extends JPanel {
     private final NewPointsPanel newPointsPanel;
 
     /**
-     * Creates an InputPanel object with added InitializingPanel
-     * and NewPointsPanel.
+     * Creates an <code>InputPanel</code> object with added <code>InitializingPanel</code>
+     * and <code>NewPointsPanel</code>.
      */
     public InputPanel() {
         setLayout(new GridLayout(1, 2));
@@ -29,18 +29,14 @@ public class InputPanel extends JPanel {
     }
 
     /**
-     * Get initializingPanel.
-     *
-     * @return initializingPanel.
+     * @return <code>initializingPanel</code>.
      */
     public InitializingPanel getInitializingPanel() {
         return initializingPanel;
     }
 
     /**
-     * Get newPointsPanel.
-     *
-     * @return newPointsPanel.
+     * @return <code>newPointsPanel</code>.
      */
     public NewPointsPanel getNewPointsPanel() {
         return newPointsPanel;

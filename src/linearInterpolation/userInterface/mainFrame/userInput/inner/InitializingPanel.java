@@ -3,10 +3,14 @@ package linearInterpolation.userInterface.mainFrame.userInput.inner;
 import linearInterpolation.model.event.InterpolationUpdateEvent;
 import linearInterpolation.model.listener.InterpolationUpdateListener;
 import linearInterpolation.userInterface.mainFrame.MainFrame;
+import linearInterpolation.userInterface.mainFrame.userInput.Parser;
 
 import javax.swing.*;
 import java.awt.*;
-import java.text.*;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -15,8 +19,6 @@ import java.util.List;
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 
-
-// TODO: finish formatter, maybe move to a new class, or simplify
 public class InitializingPanel extends JPanel implements InterpolationUpdateListener {
     public final int MAX_VALUES_COUNT = 125;
     public final int defaultValuesCount = 5;
@@ -50,9 +52,9 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
     }
 
     @Override
-    public void update(InterpolationUpdateEvent event) {
-        Collection<Double> timeValues = MainFrame.getInterpolation().getXValues();
-        Collection<Double> temperatureValues = MainFrame.getInterpolation().getYValues();
+    public void interpolationUpdated(InterpolationUpdateEvent event) {
+        Collection<Double> timeValues = event.getSource().getXValues();
+        Collection<Double> temperatureValues = event.getSource().getYValues();
         updateValuesPanel(timeValues.size());
         fillValueFields(timeValues, temperatureValues);
     }
@@ -61,8 +63,10 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
         Iterator<Double> timeIterator = timeValues.iterator();
         Iterator<Double> temperatureIterator = temperatureValues.iterator();
         for (int i = 0; i < timeValuesFields.size(); i++) {
-            timeValuesFields.get(i).setText(timeIterator.next().toString());
-            temperatureValuesFields.get(i).setText(temperatureIterator.next().toString());
+            String time = numberFormat.format(timeIterator.next());
+            String temperature = numberFormat.format(temperatureIterator.next());
+            timeValuesFields.get(i).setText(time);
+            temperatureValuesFields.get(i).setText(temperature);
         }
     }
 
@@ -73,23 +77,24 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
 
         valuesCountField.setValue(defaultValuesCount);
         valuesCountField.setColumns(5);
-        setButton.addActionListener(e -> updateValuesPanel(getValuesCount()));
+        setButton.addActionListener(e -> {
+            try {
+                updateValuesPanel(getValuesCount());
+            } catch (ParseException | NumberFormatException exception) {
+                showNumberFormatErrorDialog();
+            }
+        });
         countPanel.add(valuesCountField);
         countPanel.add(setButton);
         return countPanel;
     }
 
-    private int getValuesCount() {
+    private int getValuesCount() throws ParseException, NumberFormatException {
         int count;
-        try {
-            String text = valuesCountField.getText();
-            count = intFormat.parse(text).intValue();
-            if (count <= 0 || count > MAX_VALUES_COUNT) {
-                throw new NumberFormatException();
-            }
-        } catch (NumberFormatException | ParseException e) {
-            showNumberFormatErrorDialog();
-            return -1;
+        String text = valuesCountField.getText();
+        count = intFormat.parse(text).intValue();
+        if (count <= 0 || count > MAX_VALUES_COUNT) {
+            throw new NumberFormatException();
         }
         return count;
     }
@@ -101,17 +106,26 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
         valuesPanel.revalidate();
     }
 
-    // TODO: try to simplify
     private JPanel createValuesPanel(int valuesCount) {
         JPanel valuesPanel = new JPanel();
         valuesPanel.setLayout(new BorderLayout());
-        JPanel fieldsPanel = new JPanel(new GridLayout(valuesCount + 1, 2));
         JPanel outerFieldsPanel = new JPanel(new BorderLayout());
+        JPanel fieldsPanel = createFieldsPanel(valuesCount);
         outerFieldsPanel.add(fieldsPanel, BorderLayout.NORTH);
         JScrollPane scrollPane = new JScrollPane(outerFieldsPanel,
                 VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(200, 300));
 
+
+        JButton initializeButton = new JButton("Initialize");
+        initializeButton.addActionListener(e -> initializeInterpolation());
+        valuesPanel.add(scrollPane, BorderLayout.CENTER);
+        valuesPanel.add(initializeButton, BorderLayout.SOUTH);
+        return valuesPanel;
+    }
+
+    private JPanel createFieldsPanel(int valuesCount) {
+        JPanel fieldsPanel = new JPanel(new GridLayout(valuesCount + 1, 2));
         JPanel timeLabelPanel = new JPanel();
         JPanel temperatureLabelPanel = new JPanel();
         timeLabelPanel.add(new JLabel("Time"));
@@ -135,11 +149,7 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
             fieldsPanel.add(timePanel);
             fieldsPanel.add(temperaturePanel);
         }
-        JButton initializeButton = new JButton("Initialize");
-        initializeButton.addActionListener(e -> initializeInterpolation());
-        valuesPanel.add(scrollPane, BorderLayout.CENTER);
-        valuesPanel.add(initializeButton, BorderLayout.SOUTH);
-        return valuesPanel;
+        return fieldsPanel;
     }
 
     private void initializeInterpolation() {
@@ -156,14 +166,9 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
     private List<Double> parseFields(Collection<JTextField> fields) throws ParseException {
         List<Double> values = new ArrayList<>(fields.size());
         for (JTextField f : fields) {
-            values.add(parseField(f));
+            values.add(Parser.parseField(f, numberFormat));
         }
         return values;
-    }
-
-    private Double parseField(JTextField field) throws ParseException {
-        String text = field.getText();
-        return numberFormat.parse(text).doubleValue();
     }
 
     private void showNumberFormatErrorDialog() {

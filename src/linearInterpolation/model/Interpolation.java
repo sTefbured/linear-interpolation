@@ -20,6 +20,7 @@ public abstract class Interpolation implements Serializable {
     private double coefficientB;
 
     public Interpolation() {
+        listenersList = new EventListenerList();
         xInterpolated = new ArrayList<>();
         yInterpolated = new ArrayList<>();
         xValues = new ArrayList<>();
@@ -71,7 +72,7 @@ public abstract class Interpolation implements Serializable {
         InterpolationUpdateEvent event = new InterpolationUpdateEvent(this);
         InterpolationUpdateListener[] listeners = listenersList.getListeners(InterpolationUpdateListener.class);
         for (InterpolationUpdateListener listener : listeners) {
-            listener.update(event);
+            listener.interpolationUpdated(event);
         }
     }
 

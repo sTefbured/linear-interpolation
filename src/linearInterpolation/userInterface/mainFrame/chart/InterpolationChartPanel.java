@@ -54,10 +54,10 @@ public class InterpolationChartPanel extends JPanel implements InterpolationUpda
     }
 
     @Override
-    public void update(InterpolationUpdateEvent event) {
+    public void interpolationUpdated(InterpolationUpdateEvent event) {
         removeAllSeries();
         clearAllSeries();
-        initializeAllSeries();
+        initializeAllSeries(event.getSource());
         addAllSeries();
         repaint();
     }
@@ -117,8 +117,7 @@ public class InterpolationChartPanel extends JPanel implements InterpolationUpda
         plot.setRangeCrosshairVisible(true);
     }
 
-    private void initializeAllSeries() {
-        Interpolation interpolation = MainFrame.getInterpolation();
+    private void initializeAllSeries(Interpolation interpolation) {
         double minTimeValue = Collections.min(interpolation.getXValues());
         double maxTimeValue = Collections.max(interpolation.getXValues());
         double time1;

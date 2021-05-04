@@ -4,14 +4,14 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * AboutAuthorDialog is an extension of JDialog that contains information
+ * <code>AboutAuthorDialog</code> is an extension of <code>JDialog</code> that contains information
  * about author of the project.
  *
  * @author Kotikov S.G.
  */
 public class AboutAuthorDialog extends JDialog {
     /**
-     * Creates dialog with added information about the author.
+     * Creates dialog with information about the author.
      *
      * @param parent parent frame of the dialog.
      */

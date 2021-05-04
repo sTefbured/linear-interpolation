@@ -4,6 +4,7 @@ import linearInterpolation.model.Interpolation;
 import linearInterpolation.model.event.InterpolationUpdateEvent;
 import linearInterpolation.model.listener.InterpolationUpdateListener;
 import linearInterpolation.userInterface.mainFrame.MainFrame;
+import linearInterpolation.userInterface.mainFrame.userInput.Parser;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,13 +18,13 @@ import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 
 /**
- * NewPointsPanel is an extension of JPanel that contains UI components
+ * <code>NewPointsPanel</code> is an extension of <code>JPanel</code> that contains UI components
  * for calculating function values and list of result points.
  * Calculation is performed by entering an decimal value into text field
  * and pressing "Add" button. Result point will be displayed in the list.
  * <p>
- * This panel implements InterpolationUpdateListener, because it needs to be updated,
- * when new points are created in current Interpolation object.
+ * This panel implements <code>InterpolationUpdateListener</code>, because it needs to be updated,
+ * when new points are created in current <code>Interpolation</code> object.
  *
  * @author Kotikov S.G.
  */
@@ -35,9 +36,9 @@ public class NewPointsPanel extends JPanel implements InterpolationUpdateListene
     private final JList<Point2D.Double> addedPointsList;
 
     /**
-     * Creates a NewPointsPanel object and adds it to listeners list of current Interpolation.
-     * In result panel contains text field for time values, add/delete buttons and JList of
-     * added points.
+     * Creates a <code>NewPointsPanel</code> object and adds it to listeners list of
+     * current <code>Interpolation</code>. In result panel contains text field for time values,
+     * add/delete buttons and <code>JList</code> of added points.
      */
     public NewPointsPanel() {
         // Add the panel as a listener to current Interpolation object
@@ -49,7 +50,7 @@ public class NewPointsPanel extends JPanel implements InterpolationUpdateListene
         addButton = createAddButton();
         deleteButton = createDeleteButton();
         addedPointsList = new JList<>();
-        addedPointsList.setModel(createListModel());
+        addedPointsList.setModel(createListModel(MainFrame.getInterpolation()));
         setComponentsEnabled(false);
         timeFieldPanel.add(timeField);
         timeFieldPanel.add(addButton);
@@ -60,19 +61,35 @@ public class NewPointsPanel extends JPanel implements InterpolationUpdateListene
     }
 
     /**
-     * Updates JList of added points and if current interpolation object
+     * Updates <code>JList</code> of added points and if current <code>interpolation</code> object
      * is initialized, sets input components enabled.
      *
-     * @param event
+     * @param event <code>InterpolationUpdateEvent</code> object from source interpolation
      */
     @Override
-    public void update(InterpolationUpdateEvent event) {
-        if (MainFrame.getInterpolation().isInitialized()) {
+    public void interpolationUpdated(InterpolationUpdateEvent event) {
+        if (event.getSource().isInitialized()) {
             setComponentsEnabled(true);
         }
 
-        //TODO: stop recreating all the time!!! Should update instead.
-        addedPointsList.setModel(createListModel());
+        addedPointsList.setModel(createListModel(event.getSource()));
+    }
+
+    private DefaultListModel<Point2D.Double> createListModel(Interpolation interpolation) {
+        Iterable<Double> timeValues = interpolation.getXInterpolated();
+        Iterable<Double> temperatureValues = interpolation.getYInterpolated();
+        Iterator<Double> temperatureIterator = temperatureValues.iterator();
+        DefaultListModel<Point2D.Double> dataModel = new DefaultListModel<>();
+        timeValues.forEach(x -> {
+            Point2D.Double point = new Point2D.Double(x, temperatureIterator.next()) {
+                @Override
+                public String toString() {
+                    return String.format("Time: %.3f Temperature: %.3f", getX(), getY());
+                }
+            };
+            dataModel.add(dataModel.size(), point);
+        });
+        return dataModel;
     }
 
     private JFormattedTextField createTimeField() {
@@ -85,7 +102,8 @@ public class NewPointsPanel extends JPanel implements InterpolationUpdateListene
         JButton button = new JButton("Add");
         button.addActionListener(e -> {
             try {
-                MainFrame.getInterpolation().addPoint(parseField(timeField));
+                double timeValue = Parser.parseField(timeField, numberFormat);
+                MainFrame.getInterpolation().addPoint(timeValue);
             } catch (ParseException parseException) {
                 JOptionPane.showMessageDialog(
                         this,
@@ -116,35 +134,11 @@ public class NewPointsPanel extends JPanel implements InterpolationUpdateListene
         return panel;
     }
 
-    private DefaultListModel<Point2D.Double> createListModel() {
-        Interpolation interpolation = MainFrame.getInterpolation();
-        Iterable<Double> timeValues = interpolation.getXInterpolated();
-        Iterable<Double> temperatureValues = interpolation.getYInterpolated();
-        Iterator<Double> temperatureIterator = temperatureValues.iterator();
-        DefaultListModel<Point2D.Double> dataModel = new DefaultListModel<>();
-        timeValues.forEach(x -> {
-            Point2D.Double point = new Point2D.Double(x, temperatureIterator.next()) {
-                @Override
-                public String toString() {
-                    return String.format("Time: %.3f Temperature: %.3f", getX(), getY());
-                }
-            };
-            dataModel.add(dataModel.size(), point);
-        });
-        return dataModel;
-    }
-
     private void setComponentsEnabled(boolean enabled) {
         timeField.setEditable(enabled);
         final String tooltipText = "You must input initial values first.";
         timeField.setToolTipText(enabled ? "" : tooltipText);
         addButton.setEnabled(enabled);
         deleteButton.setEnabled(enabled);
-    }
-
-    // TODO: move to utils class
-    private Double parseField(JTextField field) throws ParseException {
-        String text = field.getText();
-        return numberFormat.parse(text).doubleValue();
     }
 }

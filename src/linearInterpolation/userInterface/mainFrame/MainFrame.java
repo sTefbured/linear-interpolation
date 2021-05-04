@@ -2,6 +2,7 @@ package linearInterpolation.userInterface.mainFrame;
 
 import linearInterpolation.model.Interpolation;
 import linearInterpolation.model.LinearInterpolation;
+import linearInterpolation.model.TemperatureFunctionInterpolation;
 import linearInterpolation.model.listener.InterpolationUpdateListener;
 import linearInterpolation.userInterface.mainFrame.chart.InterpolationChartPanel;
 import linearInterpolation.userInterface.mainFrame.menu.MenuBar;
@@ -11,8 +12,8 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * A MainFrame object is an extended version of JFrame that adds
- * panels and menu bar on the frame. Contains Interpolation object as a field.
+ * A <code>MainFrame</code> object is an extended version of <code>JFrame</code> that adds
+ * panels and menu bar on the frame. Contains <code>Interpolation</code> object as a field.
  *
  * @author Kotikov S.G.
  */
@@ -26,7 +27,7 @@ public class MainFrame extends JFrame {
      */
     public MainFrame() {
         super("Linear interpolation coursework");
-        interpolation = new LinearInterpolation();
+        interpolation = new TemperatureFunctionInterpolation();
         inputPanel = new InputPanel();
         chartPanel = new InterpolationChartPanel();
         add(inputPanel);
@@ -40,7 +41,7 @@ public class MainFrame extends JFrame {
     }
 
     /**
-     * Sets a new value for interpolation field, and adds listeners to it.
+     * Sets a new value for <code>interpolation</code> field, and adds listeners to it.
      *
      * @param interpolation new instance of Interpolation
      * @see InterpolationUpdateListener
@@ -54,9 +55,7 @@ public class MainFrame extends JFrame {
     }
 
     /**
-     * Get current Interpolation instance
-     *
-     * @return Interpolation instance
+     * @return <code>Interpolation</code> instance
      */
     public static Interpolation getInterpolation() {
         return interpolation;
