@@ -2,7 +2,6 @@ package linearInterpolation.userInterface.mainFrame;
 
 import linearInterpolation.model.Interpolation;
 import linearInterpolation.model.LinearInterpolation;
-import linearInterpolation.model.TemperatureFunctionInterpolation;
 import linearInterpolation.model.listener.InterpolationUpdateListener;
 import linearInterpolation.userInterface.mainFrame.chart.InterpolationChartPanel;
 import linearInterpolation.userInterface.mainFrame.menu.MenuBar;
@@ -27,7 +26,7 @@ public class MainFrame extends JFrame {
      */
     public MainFrame() {
         super("Linear interpolation coursework");
-        interpolation = new TemperatureFunctionInterpolation();
+        interpolation = new LinearInterpolation();
         inputPanel = new InputPanel();
         chartPanel = new InterpolationChartPanel();
         add(inputPanel);

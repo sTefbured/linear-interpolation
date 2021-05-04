@@ -6,6 +6,7 @@ import linearInterpolation.model.listener.InterpolationUpdateListener;
 import javax.swing.event.EventListenerList;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class Interpolation implements Serializable {
@@ -85,19 +86,19 @@ public abstract class Interpolation implements Serializable {
     }
 
     public List<Double> getXValues() {
-        return xValues;
+        return Collections.unmodifiableList(xValues);
     }
 
     public List<Double> getYValues() {
-        return yValues;
+        return Collections.unmodifiableList(yValues);
     }
 
     public List<Double> getXInterpolated() {
-        return xInterpolated;
+        return Collections.unmodifiableList(xInterpolated);
     }
 
     public List<Double> getYInterpolated() {
-        return yInterpolated;
+        return Collections.unmodifiableList(yInterpolated);
     }
 
     public double getCoefficientA() {
