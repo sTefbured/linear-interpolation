@@ -1,13 +1,17 @@
 package linearInterpolation.userInterface.mainFrame.userInput.inner;
 
-import linearInterpolation.model.event.ObjectUpdateEvent;
-import linearInterpolation.model.listener.ObjectUpdateListener;
+import linearInterpolation.model.event.InterpolationUpdateEvent;
+import linearInterpolation.model.interpolation.Interpolation;
+import linearInterpolation.model.listener.InterpolationUpdateListener;
 import linearInterpolation.userInterface.mainFrame.MainFrame;
+import linearInterpolation.userInterface.mainFrame.userInput.util.Parser;
 
 import javax.swing.*;
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -16,18 +20,51 @@ import java.util.List;
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 
-public class InitializingPanel extends JPanel implements ObjectUpdateListener {
+/**
+ * <code>InitializingPanel</code> is an extension of JPanel
+ * which contains fields and buttons for initializing current
+ * <code>Interpolation</code> object located in {@link MainFrame} class.
+ * <p>
+ * Implements {@link InterpolationUpdateListener} because it
+ * must be notified when current <code>Interpolation</code> object
+ * is updated. When being notified, <code>update</code> method
+ * is called, where UI components are being updated.
+ *
+ * @author Kotikov S.G.
+ * @see MainFrame
+ * @see Interpolation
+ * @see InterpolationUpdateListener
+ */
+public class InitializingPanel extends JPanel implements InterpolationUpdateListener {
     public final int MAX_VALUES_COUNT = 125;
-    private final NumberFormat numberFormat = NumberFormat.getNumberInstance();
-    private final NumberFormat intFormat = NumberFormat.getIntegerInstance();
     public final int defaultValuesCount = 5;
 
-    private ArrayList<JTextField> xValuesFields;
-    private ArrayList<JTextField> yValuesFields;
+    private final NumberFormat numberFormat;
+    private final NumberFormat intFormat = NumberFormat.getIntegerInstance();
+
     private JFormattedTextField valuesCountField;
+    private ArrayList<JTextField> timeValuesFields;
+    private ArrayList<JTextField> temperatureValuesFields;
     private JPanel valuesPanel;
 
+    /**
+     * Creates panel with UI components for input of
+     * values count, time and temperature values.
+     * Also creates <code>NumberFormat</code> of decimal positive numbers.
+     */
     public InitializingPanel() {
+        numberFormat = new DecimalFormat() {
+            @Override
+            public Number parse(String source, ParsePosition parsePosition) {
+                Number number = super.parse(source, parsePosition);
+                if (number == null || number.doubleValue() < 0) {
+                    parsePosition.setIndex(source.length());
+                    parsePosition.setErrorIndex(-1);
+                    number = null;
+                }
+                return number;
+            }
+        };
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createTitledBorder("Initial values"));
         add(createCountPanel());
@@ -35,20 +72,28 @@ public class InitializingPanel extends JPanel implements ObjectUpdateListener {
         add(valuesPanel);
     }
 
+    /**
+     * Updates count of fields on <code>valuesPanel</code>
+     * The method is being called when current <code>Interpolation</code> is changed.
+     *
+     * @param event <code>InterpolationUpdateEvent</code> parameters.
+     */
     @Override
-    public void update(ObjectUpdateEvent event) {
-        Collection<Double> xValues = MainFrame.getInterpolation().getXValues();
-        Collection<Double> yValues = MainFrame.getInterpolation().getYValues();
-        updateValuesPanel(xValues.size());
-        fillValueFields(xValues, yValues);
+    public void interpolationUpdated(InterpolationUpdateEvent event) {
+        Collection<Double> timeValues = event.getSource().getXValues();
+        Collection<Double> temperatureValues = event.getSource().getYValues();
+        updateValuesPanel(timeValues.size());
+        fillValueFields(timeValues, temperatureValues);
     }
 
-    private void fillValueFields(Collection<Double> xValues, Collection<Double> yValues) {
-        Iterator<Double> xIterator = xValues.iterator();
-        Iterator<Double> yIterator = yValues.iterator();
-        for (int i = 0; i < xValuesFields.size(); i++) {
-            xValuesFields.get(i).setText(xIterator.next().toString());
-            yValuesFields.get(i).setText(yIterator.next().toString());
+    private void fillValueFields(Collection<Double> timeValues, Collection<Double> temperatureValues) {
+        Iterator<Double> timeIterator = timeValues.iterator();
+        Iterator<Double> temperatureIterator = temperatureValues.iterator();
+        for (int i = 0; i < timeValuesFields.size(); i++) {
+            String time = numberFormat.format(timeIterator.next());
+            String temperature = numberFormat.format(temperatureIterator.next());
+            timeValuesFields.get(i).setText(time);
+            temperatureValuesFields.get(i).setText(temperature);
         }
     }
 
@@ -59,23 +104,24 @@ public class InitializingPanel extends JPanel implements ObjectUpdateListener {
 
         valuesCountField.setValue(defaultValuesCount);
         valuesCountField.setColumns(5);
-        setButton.addActionListener(e -> updateValuesPanel(getValuesCount()));
+        setButton.addActionListener(e -> {
+            try {
+                updateValuesPanel(getValuesCount());
+            } catch (ParseException | NumberFormatException exception) {
+                showNumberFormatErrorDialog();
+            }
+        });
         countPanel.add(valuesCountField);
         countPanel.add(setButton);
         return countPanel;
     }
 
-    private int getValuesCount() {
+    private int getValuesCount() throws ParseException, NumberFormatException {
         int count;
-        try {
-            String text = valuesCountField.getText();
-            count = intFormat.parse(text).intValue();
-            if (count <= 0 || count > MAX_VALUES_COUNT) {
-                throw new NumberFormatException();
-            }
-        } catch (NumberFormatException | ParseException e) {
-            showNumberFormatErrorDialog();
-            return -1;
+        String text = valuesCountField.getText();
+        count = intFormat.parse(text).intValue();
+        if (count <= 0 || count > MAX_VALUES_COUNT) {
+            throw new NumberFormatException();
         }
         return count;
     }
@@ -87,40 +133,17 @@ public class InitializingPanel extends JPanel implements ObjectUpdateListener {
         valuesPanel.revalidate();
     }
 
-    // TODO: try to simplify
     private JPanel createValuesPanel(int valuesCount) {
         JPanel valuesPanel = new JPanel();
         valuesPanel.setLayout(new BorderLayout());
-        JPanel fieldsPanel = new JPanel(new GridLayout(valuesCount + 1, 2));
         JPanel outerFieldsPanel = new JPanel(new BorderLayout());
+        JPanel fieldsPanel = createFieldsPanel(valuesCount);
         outerFieldsPanel.add(fieldsPanel, BorderLayout.NORTH);
         JScrollPane scrollPane = new JScrollPane(outerFieldsPanel,
                 VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(200, 300));
 
-        JPanel xLabelPanel = new JPanel();
-        JPanel yLabelPanel = new JPanel();
-        xLabelPanel.add(new JLabel("Time"));
-        yLabelPanel.add(new JLabel("Temperature"));
-        fieldsPanel.add(xLabelPanel);
-        fieldsPanel.add(yLabelPanel);
-        xValuesFields = new ArrayList<>(valuesCount);
-        yValuesFields = new ArrayList<>(valuesCount);
 
-        for (int i = 0; i < valuesCount; i++) {
-            JFormattedTextField xField = new JFormattedTextField(numberFormat);
-            JFormattedTextField yField = new JFormattedTextField(numberFormat);
-            xField.setColumns(5);
-            yField.setColumns(5);
-            JPanel xPanel = new JPanel();
-            JPanel yPanel = new JPanel();
-            xPanel.add(xField);
-            yPanel.add(yField);
-            xValuesFields.add(xField);
-            yValuesFields.add(yField);
-            fieldsPanel.add(xPanel);
-            fieldsPanel.add(yPanel);
-        }
         JButton initializeButton = new JButton("Initialize");
         initializeButton.addActionListener(e -> initializeInterpolation());
         valuesPanel.add(scrollPane, BorderLayout.CENTER);
@@ -128,10 +151,38 @@ public class InitializingPanel extends JPanel implements ObjectUpdateListener {
         return valuesPanel;
     }
 
+    private JPanel createFieldsPanel(int valuesCount) {
+        JPanel fieldsPanel = new JPanel(new GridLayout(valuesCount + 1, 2));
+        JPanel timeLabelPanel = new JPanel();
+        JPanel temperatureLabelPanel = new JPanel();
+        timeLabelPanel.add(new JLabel("Time"));
+        temperatureLabelPanel.add(new JLabel("Temperature"));
+        fieldsPanel.add(timeLabelPanel);
+        fieldsPanel.add(temperatureLabelPanel);
+        timeValuesFields = new ArrayList<>(valuesCount);
+        temperatureValuesFields = new ArrayList<>(valuesCount);
+
+        for (int i = 0; i < valuesCount; i++) {
+            JFormattedTextField timeField = new JFormattedTextField(numberFormat);
+            JFormattedTextField temperatureField = new JFormattedTextField(numberFormat);
+            timeField.setColumns(5);
+            temperatureField.setColumns(5);
+            JPanel timePanel = new JPanel();
+            JPanel temperaturePanel = new JPanel();
+            timePanel.add(timeField);
+            temperaturePanel.add(temperatureField);
+            timeValuesFields.add(timeField);
+            temperatureValuesFields.add(temperatureField);
+            fieldsPanel.add(timePanel);
+            fieldsPanel.add(temperaturePanel);
+        }
+        return fieldsPanel;
+    }
+
     private void initializeInterpolation() {
         try {
-            List<Double> timeStamps = parseFields(xValuesFields);
-            List<Double> temperatures = parseFields(yValuesFields);
+            List<Double> timeStamps = parseFields(timeValuesFields);
+            List<Double> temperatures = parseFields(temperatureValuesFields);
             MainFrame.getInterpolation().initialize(timeStamps, temperatures);
             getParent().repaint();
         } catch (ParseException e) {
@@ -142,14 +193,9 @@ public class InitializingPanel extends JPanel implements ObjectUpdateListener {
     private List<Double> parseFields(Collection<JTextField> fields) throws ParseException {
         List<Double> values = new ArrayList<>(fields.size());
         for (JTextField f : fields) {
-            values.add(parseField(f));
+            values.add(Parser.parseField(f, numberFormat));
         }
         return values;
-    }
-
-    private Double parseField(JTextField field) throws ParseException {
-        String text = field.getText();
-        return numberFormat.parse(text).doubleValue();
     }
 
     private void showNumberFormatErrorDialog() {

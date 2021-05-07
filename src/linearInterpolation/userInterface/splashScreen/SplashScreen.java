@@ -9,8 +9,8 @@ import java.net.URL;
 import static java.awt.Image.SCALE_FAST;
 
 /**
- * A SplashScreen is an extended version of JFrame that shows
- * information about the project while the MainFrame is creating.
+ * A <code>SplashScreen</code> is an extended version of <code>JFrame</code> that shown while
+ * the <code>MainFrame</code> is creating. Contains information about the project, "Next" and "Exit" buttons.
  *
  * @author Kotikov S.G.
  */
@@ -24,8 +24,8 @@ public class SplashScreen extends JFrame {
     private MainFrame mainFrame;
 
     /**
-     * Creates visible SplashScreen frame and starts MainFrame creating
-     * in parallel thread.
+     * Starts a parallel thread, where <code>MainFrame</code> is being created,
+     * creates visible <code>SplashScreen</code> object and runs timer.
      */
     public SplashScreen() {
         mainFrameThread = new Thread(() -> mainFrame = new MainFrame());
@@ -110,6 +110,18 @@ public class SplashScreen extends JFrame {
         add(infoLabel, constraints);
     }
 
+    private JButton createNextButton() {
+        JButton button = new JButton("Далее");
+        button.addActionListener(e -> switchToMainFrame());
+        return button;
+    }
+
+    private JButton createExitButton() {
+        JButton button = new JButton("Выход");
+        button.addActionListener(e -> System.exit(0));
+        return button;
+    }
+
     private void addButtons() {
         constraints.gridwidth = 1;
         constraints.gridx = 0;
@@ -122,12 +134,6 @@ public class SplashScreen extends JFrame {
         add(exitButton, constraints);
     }
 
-    private JButton createNextButton() {
-        JButton button = new JButton("Далее");
-        button.addActionListener(e -> switchToMainFrame());
-        return button;
-    }
-
     private void switchToMainFrame() {
         timer.stop();
         try {
@@ -137,11 +143,5 @@ public class SplashScreen extends JFrame {
         }
         dispose();
         mainFrame.setVisible(true);
-    }
-
-    private JButton createExitButton() {
-        JButton button = new JButton("Выход");
-        button.addActionListener(e -> System.exit(0));
-        return button;
     }
 }

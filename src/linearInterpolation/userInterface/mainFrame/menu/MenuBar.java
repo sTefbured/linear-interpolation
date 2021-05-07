@@ -1,6 +1,6 @@
 package linearInterpolation.userInterface.mainFrame.menu;
 
-import linearInterpolation.model.Interpolation;
+import linearInterpolation.model.interpolation.Interpolation;
 import linearInterpolation.userInterface.mainFrame.MainFrame;
 import linearInterpolation.userInterface.mainFrame.about.AboutAuthorDialog;
 import linearInterpolation.userInterface.mainFrame.about.AboutProgramDialog;
@@ -10,6 +10,14 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.*;
 
+/**
+ * MenuBar is an extension of JMenuBar which contains menu items
+ * for saving/loading interpolation data files (.intp) and about section.
+ * About section consists of "About author" and "About program" items.
+ * "About" items open "About" dialogs with certain information.
+ *
+ * @author Kotikov S.G.
+ */
 public class MenuBar extends JMenuBar {
     private final String fileExtension = "intp";
     private final String fileDescription = "Interpolation data file .intp";
@@ -17,6 +25,12 @@ public class MenuBar extends JMenuBar {
     private final MainFrame parentFrame;
     private final JFileChooser fileChooser;
 
+    /**
+     * Creates <code>MenuBar</code> object with "Load", "Save" and "About" items.
+     * Initializes <code>parentFrame</code> which used for centering dialogs relatively to parent frame.
+     *
+     * @param parent parent frame of the menu bar.
+     */
     public MenuBar(MainFrame parent) {
         super();
         parentFrame = parent;
@@ -109,7 +123,6 @@ public class MenuBar extends JMenuBar {
         }
     }
 
-    // TODO: fill listeners
     private JMenu createAboutMenu() {
         JMenu aboutMenu = new JMenu("About");
         JMenuItem aboutDeveloperItem = new JMenuItem("Developer");
