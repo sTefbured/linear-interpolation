@@ -1,4 +1,4 @@
-package linearInterpolation.model;
+package linearInterpolation.model.interpolation;
 
 import linearInterpolation.model.event.InterpolationUpdateEvent;
 import linearInterpolation.model.listener.InterpolationUpdateListener;

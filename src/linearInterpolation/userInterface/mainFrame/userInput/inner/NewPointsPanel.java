@@ -1,10 +1,10 @@
 package linearInterpolation.userInterface.mainFrame.userInput.inner;
 
-import linearInterpolation.model.Interpolation;
+import linearInterpolation.model.interpolation.Interpolation;
 import linearInterpolation.model.event.InterpolationUpdateEvent;
 import linearInterpolation.model.listener.InterpolationUpdateListener;
 import linearInterpolation.userInterface.mainFrame.MainFrame;
-import linearInterpolation.userInterface.mainFrame.userInput.Parser;
+import linearInterpolation.userInterface.mainFrame.userInput.util.Parser;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,7 +20,7 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 /**
  * <code>NewPointsPanel</code> is an extension of <code>JPanel</code> that contains UI components
  * for calculating function values and list of result points.
- * Calculation is performed by entering an decimal value into text field
+ * Calculation is performed by entering a decimal value into text field
  * and pressing "Add" button. Result point will be displayed in the list.
  * <p>
  * This panel implements <code>InterpolationUpdateListener</code>, because it needs to be updated,

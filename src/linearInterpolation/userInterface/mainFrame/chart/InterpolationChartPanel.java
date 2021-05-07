@@ -1,7 +1,7 @@
 package linearInterpolation.userInterface.mainFrame.chart;
 
-import linearInterpolation.model.Interpolation;
 import linearInterpolation.model.event.InterpolationUpdateEvent;
+import linearInterpolation.model.interpolation.Interpolation;
 import linearInterpolation.model.listener.InterpolationUpdateListener;
 import linearInterpolation.userInterface.mainFrame.MainFrame;
 import org.jfree.chart.ChartFactory;
@@ -18,10 +18,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseListener;
 import java.awt.geom.Ellipse2D;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EventListener;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.List;
 
 public class InterpolationChartPanel extends JPanel implements InterpolationUpdateListener {
     public final int INTERPOLATED_POINTS_INDEX = 0;
@@ -118,28 +119,41 @@ public class InterpolationChartPanel extends JPanel implements InterpolationUpda
     }
 
     private void initializeAllSeries(Interpolation interpolation) {
+        initializeLineSeries(interpolation);
+        initializePointSeries(initialPointsSeries,
+                interpolation.getXValues(), interpolation.getYValues());
+        initializePointSeries(interpolatedPointsSeries,
+                interpolation.getXInterpolated(), interpolation.getYInterpolated());
+    }
+
+    private void initializeLineSeries(Interpolation interpolation) {
+        // Find minimum and maximum time value among new and initial time values in interpolation.
         double minTimeValue = Collections.min(interpolation.getXValues());
         double maxTimeValue = Collections.max(interpolation.getXValues());
-        double time1;
-        double time2;
-        try {
-            double interpolatedMinTime = Collections.min(interpolation.getXInterpolated());
-            double interpolatedMaxTime = Collections.max(interpolation.getXInterpolated());
-            time1 = Math.min(minTimeValue, interpolatedMinTime);
-            time2 = Math.max(maxTimeValue, interpolatedMaxTime);
-        } catch (NoSuchElementException exception) {
-            time1 = minTimeValue;
-            time2 = maxTimeValue;
+        Collection<Double> xInterpolated = interpolation.getXInterpolated();
+        if (!xInterpolated.isEmpty()) {
+            double interpolatedMinTime = Collections.min(xInterpolated);
+            double interpolatedMaxTime = Collections.max(xInterpolated);
+            minTimeValue = Math.min(minTimeValue, interpolatedMinTime);
+            maxTimeValue = Math.max(maxTimeValue, interpolatedMaxTime);
         }
-        double temperature1 = interpolation.calculateFunctionValue(time1);
-        double temperature2 = interpolation.calculateFunctionValue(time2);
-        interpolatedLineSeries.add(time1, temperature1);
-        interpolatedLineSeries.add(time2, temperature2);
-        Iterator<Double> temperatureIterator = interpolation.getYValues().iterator();
-        interpolation.getXValues().forEach(x -> initialPointsSeries.add(x, temperatureIterator.next()));
-        Iterator<Double> temperatureInterpolatedIterator = interpolation.getYInterpolated().iterator();
-        interpolation.getXInterpolated()
-                .forEach(x -> interpolatedPointsSeries.add(x, temperatureInterpolatedIterator.next()));
+
+        // If having zero temperature, add zero point of the function.
+        double zeroOfTheFunction = -interpolation.getCoefficientB() / interpolation.getCoefficientA();
+        if (minTimeValue < zeroOfTheFunction && maxTimeValue > zeroOfTheFunction) {
+            interpolatedLineSeries.add(zeroOfTheFunction, 0);
+        }
+
+        // Set range of the line
+        double temperature1 = interpolation.calculateFunctionValue(minTimeValue);
+        double temperature2 = interpolation.calculateFunctionValue(maxTimeValue);
+        interpolatedLineSeries.add(minTimeValue, temperature1);
+        interpolatedLineSeries.add(maxTimeValue, temperature2);
+    }
+
+    private void initializePointSeries(XYSeries pointSeries, List<Double> times, List<Double> temperatures) {
+        Iterator<Double> temperatureIterator = temperatures.iterator();
+        times.forEach(x -> pointSeries.add(x, temperatureIterator.next()));
     }
 
     private void clearAllSeries() {

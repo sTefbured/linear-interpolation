@@ -1,6 +1,6 @@
 package linearInterpolation.model.event;
 
-import linearInterpolation.model.Interpolation;
+import linearInterpolation.model.interpolation.Interpolation;
 
 import java.util.EventObject;
 
@@ -9,10 +9,9 @@ import java.util.EventObject;
  * <code>Interpolation</code> object has changed.
  *
  * @author Kotikov S.G.
- * @see linearInterpolation.model.Interpolation
+ * @see Interpolation
  */
 public class InterpolationUpdateEvent extends EventObject {
-
     /**
      * Creates an event with defined source object.
      *

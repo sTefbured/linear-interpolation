@@ -1,9 +1,10 @@
 package linearInterpolation.userInterface.mainFrame.userInput.inner;
 
 import linearInterpolation.model.event.InterpolationUpdateEvent;
+import linearInterpolation.model.interpolation.Interpolation;
 import linearInterpolation.model.listener.InterpolationUpdateListener;
 import linearInterpolation.userInterface.mainFrame.MainFrame;
-import linearInterpolation.userInterface.mainFrame.userInput.Parser;
+import linearInterpolation.userInterface.mainFrame.userInput.util.Parser;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,6 +20,21 @@ import java.util.List;
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 
+/**
+ * <code>InitializingPanel</code> is an extension of JPanel
+ * which contains fields and buttons for initializing current
+ * <code>Interpolation</code> object located in {@link MainFrame} class.
+ * <p>
+ * Implements {@link InterpolationUpdateListener} because it
+ * must be notified when current <code>Interpolation</code> object
+ * is updated. When being notified, <code>update</code> method
+ * is called, where UI components are being updated.
+ *
+ * @author Kotikov S.G.
+ * @see MainFrame
+ * @see Interpolation
+ * @see InterpolationUpdateListener
+ */
 public class InitializingPanel extends JPanel implements InterpolationUpdateListener {
     public final int MAX_VALUES_COUNT = 125;
     public final int defaultValuesCount = 5;
@@ -31,6 +47,11 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
     private ArrayList<JTextField> temperatureValuesFields;
     private JPanel valuesPanel;
 
+    /**
+     * Creates panel with UI components for input of
+     * values count, time and temperature values.
+     * Also creates <code>NumberFormat</code> of decimal positive numbers.
+     */
     public InitializingPanel() {
         numberFormat = new DecimalFormat() {
             @Override
@@ -51,6 +72,12 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
         add(valuesPanel);
     }
 
+    /**
+     * Updates count of fields on <code>valuesPanel</code>
+     * The method is being called when current <code>Interpolation</code> is changed.
+     *
+     * @param event <code>InterpolationUpdateEvent</code> parameters.
+     */
     @Override
     public void interpolationUpdated(InterpolationUpdateEvent event) {
         Collection<Double> timeValues = event.getSource().getXValues();

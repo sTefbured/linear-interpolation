@@ -1,4 +1,4 @@
-package linearInterpolation.model;
+package linearInterpolation.model.interpolation;
 
 import linearInterpolation.model.utils.DoubleCollectionMapper;
 
@@ -11,6 +11,8 @@ import java.util.Collection;
  * @author Kotikov S.G.
  */
 public class LinearInterpolation extends Interpolation {
+    private static final long serialVersionUID = -416852628108060469L;
+
     /**
      * Calculates value of linear function with coefficients, calculated by
      * <code>initializeCoefficients</code> method.
