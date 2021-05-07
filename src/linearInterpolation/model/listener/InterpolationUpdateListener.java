@@ -5,14 +5,14 @@ import linearInterpolation.model.event.InterpolationUpdateEvent;
 import java.util.EventListener;
 
 /**
- * InterpolationUpdateListener is a listener interface for receiving InterpolationUpdateEvent events.
- * The class that is interested in processing an action event
- * implements this interface, and the object created with that
- * class is registered with a component, using the component's
- * addInterpolationUpdateListener method. When the action event
- * occurs, that object's <code>actionPerformed</code> method is
- * invoked.
+ * <code>InterpolationUpdateListener</code> is a listener interface for receiving
+ * <code>InterpolationUpdateEvent</code> events. The class that is interested in processing an
+ * <code>InterpolationEvent</code> implements this interface, and the object created with that
+ * class is registered using the <code>addInterpolationUpdateListener</code> method. When the event
+ * occurs, that object's <code>interpolationUpdate</code> method is invoked.
+ *
+ * @author Kotikov S.K.
  */
 public interface InterpolationUpdateListener extends EventListener {
-    void update(InterpolationUpdateEvent event);
+    void interpolationUpdated(InterpolationUpdateEvent event);
 }
