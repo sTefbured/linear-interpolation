@@ -1,7 +1,7 @@
 package linearInterpolation.model.interpolation;
 
-import linearInterpolation.model.event.InterpolationUpdateEvent;
-import linearInterpolation.model.listener.InterpolationUpdateListener;
+import linearInterpolation.model.interpolation.event.InterpolationUpdateEvent;
+import linearInterpolation.model.interpolation.listener.InterpolationUpdateListener;
 
 import javax.swing.event.EventListenerList;
 import java.io.Serializable;
@@ -9,6 +9,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Implementation of an interpolation calculation tool. Calculations are executed in two steps.
+ * First is setting initial x and y values by call <code>initialize</code> method.
+ *
+ * @author Kotikov S.G.
+ */
 public abstract class Interpolation implements Serializable {
     private static final long serialVersionUID = 360822176844365239L;
 
@@ -17,8 +23,7 @@ public abstract class Interpolation implements Serializable {
     private List<Double> yValues;
     private final List<Double> xInterpolated;
     private final List<Double> yInterpolated;
-    private double coefficientA;
-    private double coefficientB;
+    private final List<Double> coefficients;
 
     public Interpolation() {
         listenersList = new EventListenerList();
@@ -26,11 +31,13 @@ public abstract class Interpolation implements Serializable {
         yInterpolated = new ArrayList<>();
         xValues = new ArrayList<>();
         yValues = new ArrayList<>();
+        coefficients = new ArrayList<>();
     }
 
     public void initialize(List<Double> xValues, List<Double> yValues) {
         if (xValues.size() != yValues.size()) {
-            throw new IllegalArgumentException("X count must be equal to Y count");
+            final String errorMessage = "X count must be equal to Y count";
+            throw new IllegalArgumentException(errorMessage);
         }
         this.xValues = xValues;
         this.yValues = yValues;
@@ -101,19 +108,16 @@ public abstract class Interpolation implements Serializable {
         return Collections.unmodifiableList(yInterpolated);
     }
 
-    public double getCoefficientA() {
-        return coefficientA;
+    public List<Double> getCoefficients() {
+        return Collections.unmodifiableList(coefficients);
     }
 
-    protected void setCoefficientA(double coefficientA) {
-        this.coefficientA = coefficientA;
-    }
-
-    public double getCoefficientB() {
-        return coefficientB;
-    }
-
-    protected void setCoefficientB(double coefficientB) {
-        this.coefficientB = coefficientB;
+    protected void setCoefficients(double... coefficients) {
+        if (!this.coefficients.isEmpty()) {
+            this.coefficients.clear();
+        }
+        for (double coefficient : coefficients) {
+            this.coefficients.add(coefficient);
+        }
     }
 }

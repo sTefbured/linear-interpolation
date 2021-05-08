@@ -2,7 +2,7 @@ package linearInterpolation.userInterface.mainFrame;
 
 import linearInterpolation.model.interpolation.Interpolation;
 import linearInterpolation.model.interpolation.TimeTemperatureInterpolation;
-import linearInterpolation.model.listener.InterpolationUpdateListener;
+import linearInterpolation.model.interpolation.listener.InterpolationUpdateListener;
 import linearInterpolation.userInterface.mainFrame.chart.InterpolationChartPanel;
 import linearInterpolation.userInterface.mainFrame.menu.MenuBar;
 import linearInterpolation.userInterface.mainFrame.userInput.InputPanel;

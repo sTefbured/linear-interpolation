@@ -1,8 +1,9 @@
 package linearInterpolation.userInterface.mainFrame.chart;
 
-import linearInterpolation.model.event.InterpolationUpdateEvent;
+import linearInterpolation.model.interpolation.LinearInterpolation;
+import linearInterpolation.model.interpolation.event.InterpolationUpdateEvent;
 import linearInterpolation.model.interpolation.Interpolation;
-import linearInterpolation.model.listener.InterpolationUpdateListener;
+import linearInterpolation.model.interpolation.listener.InterpolationUpdateListener;
 import linearInterpolation.userInterface.mainFrame.MainFrame;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -119,14 +120,14 @@ public class InterpolationChartPanel extends JPanel implements InterpolationUpda
     }
 
     private void initializeAllSeries(Interpolation interpolation) {
-        initializeLineSeries(interpolation);
+        initializeLineSeries((LinearInterpolation) interpolation);
         initializePointSeries(initialPointsSeries,
                 interpolation.getXValues(), interpolation.getYValues());
         initializePointSeries(interpolatedPointsSeries,
                 interpolation.getXInterpolated(), interpolation.getYInterpolated());
     }
 
-    private void initializeLineSeries(Interpolation interpolation) {
+    private void initializeLineSeries(LinearInterpolation interpolation) {
         // Find minimum and maximum time value among new and initial time values in interpolation.
         double minTimeValue = Collections.min(interpolation.getXValues());
         double maxTimeValue = Collections.max(interpolation.getXValues());
