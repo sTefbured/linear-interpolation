@@ -26,8 +26,9 @@ public class MenuBar extends JMenuBar {
     private final JFileChooser fileChooser;
 
     /**
-     * Creates <code>MenuBar</code> object with "Load", "Save" and "About" items.
-     * Initializes <code>parentFrame</code> which used for centering dialogs relatively to parent frame.
+     * Creates <code>MenuBar</code> object with "Load", "Save" and "About"
+     * items. Initializes <code>parentFrame</code> which used for centering
+     * dialogs relatively to parent frame.
      *
      * @param parent parent frame of the menu bar.
      */

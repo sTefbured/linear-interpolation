@@ -1,12 +1,12 @@
-package linearInterpolation.model.event;
+package linearInterpolation.model.interpolation.event;
 
 import linearInterpolation.model.interpolation.Interpolation;
 
 import java.util.EventObject;
 
 /**
- * <code>InterpolationUpdateEvent</code> is an event which indicates that target
- * <code>Interpolation</code> object has changed.
+ * <code>InterpolationUpdateEvent</code> is an event which indicates
+ * that target <code>Interpolation</code> object has changed.
  *
  * @author Kotikov S.G.
  * @see Interpolation

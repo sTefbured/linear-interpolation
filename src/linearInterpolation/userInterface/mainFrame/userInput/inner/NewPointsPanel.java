@@ -1,8 +1,8 @@
 package linearInterpolation.userInterface.mainFrame.userInput.inner;
 
 import linearInterpolation.model.interpolation.Interpolation;
-import linearInterpolation.model.event.InterpolationUpdateEvent;
-import linearInterpolation.model.listener.InterpolationUpdateListener;
+import linearInterpolation.model.interpolation.event.InterpolationUpdateEvent;
+import linearInterpolation.model.interpolation.listener.InterpolationUpdateListener;
 import linearInterpolation.userInterface.mainFrame.MainFrame;
 import linearInterpolation.userInterface.mainFrame.userInput.util.Parser;
 

@@ -11,8 +11,8 @@ import javax.swing.*;
  */
 public class Main {
     /**
-     * Entry point of the application.
-     * Creates <code>SplashScreen</code> object in the AWT event dispatching thread.
+     * Entry point of the application. Creates <code>SplashScreen</code>
+     * object in the AWT event dispatching thread.
      *
      * @param args command line arguments of the application
      */

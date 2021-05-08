@@ -9,8 +9,9 @@ import java.net.URL;
 import static java.awt.Image.SCALE_FAST;
 
 /**
- * A <code>SplashScreen</code> is an extended version of <code>JFrame</code> that shown while
- * the <code>MainFrame</code> is creating. Contains information about the project, "Next" and "Exit" buttons.
+ * A <code>SplashScreen</code> is an extended version of <code>JFrame</code>
+ * that shown while the <code>MainFrame</code> is creating. Contains
+ * information about the project, "Next" and "Exit" buttons.
  *
  * @author Kotikov S.G.
  */

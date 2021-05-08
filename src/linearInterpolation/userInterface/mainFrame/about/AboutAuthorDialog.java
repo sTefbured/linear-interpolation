@@ -4,8 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * <code>AboutAuthorDialog</code> is an extension of <code>JDialog</code> that contains information
- * about author of the project.
+ * <code>AboutAuthorDialog</code> is an extension of <code>JDialog</code>
+ * that contains information about author of the project.
  *
  * @author Kotikov S.G.
  */

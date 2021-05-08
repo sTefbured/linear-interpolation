@@ -5,8 +5,11 @@ import linearInterpolation.model.utils.DoubleCollectionMapper;
 import java.util.Collection;
 
 /**
- * <code>LinearInterpolation</code> is an extension of <code>Interpolation</code> class
- * which represents linear interpolation algorithm.
+ * <code>LinearInterpolation</code> is an extension of
+ * <code>Interpolation</code> class which represents
+ * linear interpolation algorithm. The target function is
+ * <p>y = a * x + b</p>
+ * with coefficients a and b.
  *
  * @author Kotikov S.G.
  */
@@ -34,7 +37,16 @@ public class LinearInterpolation extends Interpolation {
         double xSum = xValues.stream().mapToDouble(Double::doubleValue).sum();
         double ySum = yValues.stream().mapToDouble(Double::doubleValue).sum();
         double xYSum = DoubleCollectionMapper.crossMap(xValues, yValues, (x, y) -> x * y).sum();
-        setCoefficientA((valuesCount * xYSum - xSum * ySum) / (valuesCount * squaredXSum - xSum * xSum));
-        setCoefficientB((ySum - getCoefficientA() * xSum) / valuesCount);
+        double a = (valuesCount * xYSum - xSum * ySum) / (valuesCount * squaredXSum - xSum * xSum);
+        double b = (ySum - a * xSum) / valuesCount;
+        setCoefficients(a, b);
+    }
+
+    public double getCoefficientA() {
+        return getCoefficients().get(0);
+    }
+
+    public double getCoefficientB() {
+        return getCoefficients().get(1);
     }
 }
