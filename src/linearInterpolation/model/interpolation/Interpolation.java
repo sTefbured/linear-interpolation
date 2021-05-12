@@ -36,7 +36,7 @@ public abstract class Interpolation implements Serializable {
 
     public void initialize(List<Double> xValues, List<Double> yValues) {
         if (xValues.size() != yValues.size()) {
-            final String errorMessage = "X count must be equal to Y count";
+            final String errorMessage = "Количество значений X должно быть равно количеству значений Y";
             throw new IllegalArgumentException(errorMessage);
         }
         this.xValues = xValues;

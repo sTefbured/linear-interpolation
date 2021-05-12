@@ -15,7 +15,7 @@ public final class DoubleCollectionMapper {
                                         Collection<Double> second,
                                         DoubleBinaryOperator mapper) {
         if (first.size() != second.size()) {
-            final String message = "Collections must have the same count.";
+            final String message = "Коллекции должны иметь одинаковый размер.";
             throw new IndexOutOfBoundsException(message);
         }
         int count = first.size();

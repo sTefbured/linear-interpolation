@@ -29,9 +29,9 @@ public class InterpolationChartPanel extends JPanel implements InterpolationUpda
     public final int INTERPOLATED_POINTS_INDEX = 0;
     public final int INITIAL_POINTS_INDEX = 1;
     public final int INTERPOLATED_LINE_INDEX = 2;
-    private final String INITIAL_POINTS_KEY = "Initial points";
-    private final String INTERPOLATED_LINE_KEY = "Interpolated line function";
-    private final String INTERPOLATED_POINTS_KEY = "Interpolated points";
+    private final String INITIAL_POINTS_KEY = "Начальные точки";
+    private final String INTERPOLATED_LINE_KEY = "Функция линейной интерполяции";
+    private final String INTERPOLATED_POINTS_KEY = "Интерполированные точки";
 
     private final DefaultXYDataset dataset;
     private final XYSeries initialPointsSeries;
@@ -65,8 +65,8 @@ public class InterpolationChartPanel extends JPanel implements InterpolationUpda
     }
 
     private JFreeChart createChart(XYDataset dataset) {
-        JFreeChart chart = ChartFactory.createXYLineChart("Cooling function",
-                "time, hour", "temperature, K", dataset);
+        JFreeChart chart = ChartFactory.createXYLineChart("Функция охлаждения",
+                "время, час", "температура, K", dataset);
         chart.setBackgroundPaint(Color.WHITE);
 
         XYPlot plot = chart.getXYPlot();

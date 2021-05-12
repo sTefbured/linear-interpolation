@@ -1,7 +1,7 @@
 package linearInterpolation.userInterface.mainFrame.userInput.inner;
 
-import linearInterpolation.model.interpolation.event.InterpolationUpdateEvent;
 import linearInterpolation.model.interpolation.Interpolation;
+import linearInterpolation.model.interpolation.event.InterpolationUpdateEvent;
 import linearInterpolation.model.interpolation.listener.InterpolationUpdateListener;
 import linearInterpolation.userInterface.mainFrame.MainFrame;
 import linearInterpolation.userInterface.mainFrame.userInput.util.Parser;
@@ -66,7 +66,7 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
             }
         };
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBorder(BorderFactory.createTitledBorder("Initial values"));
+        setBorder(BorderFactory.createTitledBorder("Начальные данные"));
         add(createCountPanel());
         valuesPanel = createValuesPanel(defaultValuesCount);
         add(valuesPanel);
@@ -100,7 +100,7 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
     private JPanel createCountPanel() {
         JPanel countPanel = new JPanel(new FlowLayout());
         valuesCountField = new JFormattedTextField(intFormat);
-        JButton setButton = new JButton("Set values count");
+        JButton setButton = new JButton("Задать число точек");
 
         valuesCountField.setValue(defaultValuesCount);
         valuesCountField.setColumns(5);
@@ -144,7 +144,7 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
         scrollPane.setPreferredSize(new Dimension(200, 300));
 
 
-        JButton initializeButton = new JButton("Initialize");
+        JButton initializeButton = new JButton("Задать начальные точки");
         initializeButton.addActionListener(e -> initializeInterpolation());
         valuesPanel.add(scrollPane, BorderLayout.CENTER);
         valuesPanel.add(initializeButton, BorderLayout.SOUTH);
@@ -155,8 +155,8 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
         JPanel fieldsPanel = new JPanel(new GridLayout(valuesCount + 1, 2));
         JPanel timeLabelPanel = new JPanel();
         JPanel temperatureLabelPanel = new JPanel();
-        timeLabelPanel.add(new JLabel("Time"));
-        temperatureLabelPanel.add(new JLabel("Temperature"));
+        timeLabelPanel.add(new JLabel("Время, час"));
+        temperatureLabelPanel.add(new JLabel("Температура, К"));
         fieldsPanel.add(timeLabelPanel);
         fieldsPanel.add(temperatureLabelPanel);
         timeValuesFields = new ArrayList<>(valuesCount);
@@ -201,8 +201,8 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
     private void showNumberFormatErrorDialog() {
         JOptionPane.showMessageDialog(
                 this,
-                "Error. Wrong number format.",
-                "Error",
+                "Ошибка. Неверный числовой формат.",
+                "Ошибка",
                 JOptionPane.ERROR_MESSAGE);
     }
 }
