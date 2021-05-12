@@ -17,14 +17,14 @@ public class AboutAuthorDialog extends JDialog {
      */
     public AboutAuthorDialog(JFrame parent) {
         super(parent);
-        setTitle("About author");
+        setTitle("Об авторе");
         JPanel textPanel = new JPanel();
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
         setLayout(new BorderLayout());
         JLabel[] textLabels = new JLabel[]{
-                new JLabel("Author"),
-                new JLabel("student from group 10702418"),
-                new JLabel("Kotikov Stepan Georgievich"),
+                new JLabel("Автор"),
+                new JLabel("студент группы 10702418"),
+                new JLabel("Котиков Степан Георгиевич"),
                 new JLabel("kotikov.stepan918@gmail.com")
         };
         Font font = new Font(Font.DIALOG, Font.BOLD, 16);
@@ -33,11 +33,12 @@ public class AboutAuthorDialog extends JDialog {
             label.setAlignmentX(Component.CENTER_ALIGNMENT);
             textPanel.add(label);
         }
-        JButton backButton = new JButton("Back");
+        JButton backButton = new JButton("Назад");
         backButton.addActionListener(e -> dispose());
         add(textPanel, BorderLayout.CENTER);
         add(backButton, BorderLayout.SOUTH);
         pack();
+        setResizable(false);
         setLocationRelativeTo(parent);
         setVisible(true);
     }

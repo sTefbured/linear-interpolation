@@ -9,6 +9,8 @@ import linearInterpolation.userInterface.mainFrame.userInput.InputPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * A <code>MainFrame</code> object is an extended version of <code>JFrame</code> that adds
@@ -29,6 +31,13 @@ public class MainFrame extends JFrame {
         interpolation = new TimeTemperatureInterpolation();
         inputPanel = new InputPanel();
         chartPanel = new InterpolationChartPanel();
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowIconified(WindowEvent e) {
+                super.windowIconified(e);
+                System.out.println("W: " + getWidth() + " H: " + getHeight());
+            }
+        });
         add(inputPanel);
         add(chartPanel);
         setLayout(new GridLayout(1, 2));

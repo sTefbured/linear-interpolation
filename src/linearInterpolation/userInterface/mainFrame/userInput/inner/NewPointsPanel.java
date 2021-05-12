@@ -57,7 +57,7 @@ public class NewPointsPanel extends JPanel implements InterpolationUpdateListene
         timeFieldPanel.add(deleteButton);
         add(timeFieldPanel);
         add(createAddedPointsListPanel());
-        setBorder(BorderFactory.createTitledBorder("Enter time"));
+        setBorder(BorderFactory.createTitledBorder("Ввод времени"));
     }
 
     /**
@@ -84,7 +84,7 @@ public class NewPointsPanel extends JPanel implements InterpolationUpdateListene
             Point2D.Double point = new Point2D.Double(x, temperatureIterator.next()) {
                 @Override
                 public String toString() {
-                    return String.format("Time: %.3f Temperature: %.3f", getX(), getY());
+                    return String.format("Время: %.3f Температура: %.3f", getX(), getY());
                 }
             };
             dataModel.add(dataModel.size(), point);
@@ -99,7 +99,7 @@ public class NewPointsPanel extends JPanel implements InterpolationUpdateListene
     }
 
     private JButton createAddButton() {
-        JButton button = new JButton("Add");
+        JButton button = new JButton("ОК");
         button.addActionListener(e -> {
             try {
                 double timeValue = Parser.parseField(timeField, numberFormat);
@@ -107,8 +107,8 @@ public class NewPointsPanel extends JPanel implements InterpolationUpdateListene
             } catch (ParseException parseException) {
                 JOptionPane.showMessageDialog(
                         this,
-                        "Error. Wrong number format.",
-                        "Error",
+                        "Ошибка. Неверный числовой формат.",
+                        "Ошибка",
                         JOptionPane.ERROR_MESSAGE);
             }
         });
@@ -116,7 +116,7 @@ public class NewPointsPanel extends JPanel implements InterpolationUpdateListene
     }
 
     private JButton createDeleteButton() {
-        JButton button = new JButton("Delete");
+        JButton button = new JButton("Удалить");
         button.addActionListener(e -> {
             List<Point2D.Double> selectedPoints = addedPointsList.getSelectedValuesList();
             Interpolation interpolation = MainFrame.getInterpolation();
@@ -136,7 +136,7 @@ public class NewPointsPanel extends JPanel implements InterpolationUpdateListene
 
     private void setComponentsEnabled(boolean enabled) {
         timeField.setEditable(enabled);
-        final String tooltipText = "You must input initial values first.";
+        final String tooltipText = "Сначала вы должны ввести начальные значения.";
         timeField.setToolTipText(enabled ? "" : tooltipText);
         addButton.setEnabled(enabled);
         deleteButton.setEnabled(enabled);
