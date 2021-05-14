@@ -11,7 +11,11 @@ import java.util.List;
 
 /**
  * Implementation of an interpolation calculation tool. Calculations are executed in two steps.
- * First is setting initial x and y values by call <code>initialize</code> method.
+ * The first step is setting initial <b>x</b> and <b>y</b> values by call <code>initialize</code> method.
+ * The second step is calling <code>calculateFunctionValue</code> method,
+ * which returns <b>y</b> value for given <b>x</b> value.
+ * <p>
+ *
  *
  * @author Kotikov S.G.
  */
@@ -47,6 +51,9 @@ public abstract class Interpolation implements Serializable {
         notifyObjectUpdateListeners();
     }
 
+    /**
+     * Calculates coefficients of specified function.
+     */
     protected abstract void initializeCoefficients();
 
     public abstract double calculateFunctionValue(double xValue);

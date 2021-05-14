@@ -143,7 +143,6 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
                 VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(200, 300));
 
-
         JButton initializeButton = new JButton("Задать начальные точки");
         initializeButton.addActionListener(e -> initializeInterpolation());
         valuesPanel.add(scrollPane, BorderLayout.CENTER);

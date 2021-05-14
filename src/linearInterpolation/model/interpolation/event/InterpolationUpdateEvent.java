@@ -13,7 +13,7 @@ import java.util.EventObject;
  */
 public class InterpolationUpdateEvent extends EventObject {
     /**
-     * Creates an event with defined source object.
+     * Creates an event with defined source <code>Interpolation</code> object.
      *
      * @param source source of the event.
      */
