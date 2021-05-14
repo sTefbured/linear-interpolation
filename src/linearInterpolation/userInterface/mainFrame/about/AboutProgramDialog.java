@@ -8,12 +8,24 @@ import java.net.URL;
 
 import static java.awt.Image.SCALE_FAST;
 
+/**
+ * <code>AboutProgramDialog</code> is an extension of JDialog which contains
+ * information about the program including a picture that partly explains its functioning
+ * and list of operations that program provides with.
+ *
+ * @author Kotikov S.G.
+ */
 public class AboutProgramDialog extends JDialog {
     private static final String TITLE = "О программе";
     private static final String PROGRAM_NAME = "Линейная интерполяция и экстраполяция";
 
     private final GridBagConstraints constraints;
 
+    /**
+     * Creates a dialog with added information and picture on it.
+     *
+     * @param parent parent <code>JFrame</code> of dialog. Used for centering.
+     */
     public AboutProgramDialog(JFrame parent) {
         super(parent, TITLE);
         constraints = new GridBagConstraints();

@@ -34,7 +34,8 @@ public class LinearInterpolation extends Interpolation {
     }
 
     /**
-     * Initializes coefficients of linear interpolation function using
+     * Initializes coefficients of linear interpolation function
+     * using method of least squares.
      */
     @Override
     protected void initializeCoefficients() {
@@ -50,10 +51,16 @@ public class LinearInterpolation extends Interpolation {
         setCoefficients(a, b);
     }
 
+    /**
+     * @return coefficient <b>a</b> of the linear interpolation function.
+     */
     public double getCoefficientA() {
         return getCoefficients().get(A_INDEX);
     }
 
+    /**
+     * @return coefficient <b>b</b> of the linear interpolation function.
+     */
     public double getCoefficientB() {
         return getCoefficients().get(B_INDEX);
     }

@@ -27,7 +27,7 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
  * <p>
  * Implements {@link InterpolationUpdateListener} because it
  * must be notified when current <code>Interpolation</code> object
- * is updated. When being notified, <code>update</code> method
+ * is updated. When being notified, <code>interpolationUpdated</code> method
  * is called, where UI components are being updated.
  *
  * @author Kotikov S.G.
@@ -36,8 +36,8 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
  * @see InterpolationUpdateListener
  */
 public class InitializingPanel extends JPanel implements InterpolationUpdateListener {
-    public final int MAX_VALUES_COUNT = 125;
-    public final int defaultValuesCount = 5;
+    private static final int MAX_VALUES_COUNT = 125;
+    private static final int defaultValuesCount = 5;
 
     private final NumberFormat numberFormat;
     private final NumberFormat intFormat = NumberFormat.getIntegerInstance();
@@ -73,8 +73,9 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
     }
 
     /**
-     * Updates count of fields on <code>valuesPanel</code>
-     * The method is being called when current <code>Interpolation</code> is changed.
+     * Updates count of fields on <code>valuesPanel</code>.
+     * The method is called when the <code>Interpolation</code> that the panel
+     * is subscribed to is changed.
      *
      * @param event <code>InterpolationUpdateEvent</code> parameters.
      */

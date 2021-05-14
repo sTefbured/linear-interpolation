@@ -16,7 +16,6 @@ import java.util.List;
  * which returns <b>y</b> value for given <b>x</b> value.
  * <p>
  *
- *
  * @author Kotikov S.G.
  */
 public abstract class Interpolation implements Serializable {
@@ -29,6 +28,9 @@ public abstract class Interpolation implements Serializable {
     private final List<Double> yInterpolated;
     private final List<Double> coefficients;
 
+    /**
+     * Initializes an instance of <code>Interpolation</code>.
+     */
     public Interpolation() {
         listenersList = new EventListenerList();
         xInterpolated = new ArrayList<>();
@@ -38,6 +40,14 @@ public abstract class Interpolation implements Serializable {
         coefficients = new ArrayList<>();
     }
 
+    /**
+     * Sets <b>x</b> and <b>y</b> values of the interpolation function
+     * and calculates coefficients of the function.
+     * Notifies all subscribed <code>InterpolationUpdateListener</code> objects.
+     *
+     * @param xValues initial <b>x</b> values.
+     * @param yValues initial <b>y</b> values.
+     */
     public void initialize(List<Double> xValues, List<Double> yValues) {
         if (xValues.size() != yValues.size()) {
             final String errorMessage = "Количество значений X должно быть равно количеству значений Y";
@@ -48,7 +58,7 @@ public abstract class Interpolation implements Serializable {
         xInterpolated.clear();
         yInterpolated.clear();
         initializeCoefficients();
-        notifyObjectUpdateListeners();
+        notifyInterpolationUpdateListeners();
     }
 
     /**
@@ -56,6 +66,12 @@ public abstract class Interpolation implements Serializable {
      */
     protected abstract void initializeCoefficients();
 
+    /**
+     * Calculates interpolation function value.
+     *
+     * @param xValue x value of the function.
+     * @return calculated <b>y</b> value of the function.
+     */
     public abstract double calculateFunctionValue(double xValue);
 
     public void addPoint(double x) {
@@ -64,18 +80,29 @@ public abstract class Interpolation implements Serializable {
         }
         xInterpolated.add(x);
         yInterpolated.add(calculateFunctionValue(x));
-        notifyObjectUpdateListeners();
+        notifyInterpolationUpdateListeners();
     }
 
+    /**
+     * Removes specified point.
+     *
+     * @param x <b>x</b> value of the point.
+     * @param y <b>y</b> value of the point
+     */
     public void removePoint(double x, double y) {
         int index = xInterpolated.indexOf(x);
         if ((index >= 0) && (y == yInterpolated.get(index))) {
             xInterpolated.remove(index);
             yInterpolated.remove(index);
         }
-        notifyObjectUpdateListeners();
+        notifyInterpolationUpdateListeners();
     }
 
+    /**
+     * Subscribes <code>InterpolationUpdateListener</code> object to the interpolation.
+     *
+     * @param listener listener to be subscribed.
+     */
     public void addInterpolationUpdateListener(InterpolationUpdateListener listener) {
         if (listenersList == null) {
             listenersList = new EventListenerList();
@@ -83,7 +110,7 @@ public abstract class Interpolation implements Serializable {
         listenersList.add(InterpolationUpdateListener.class, listener);
     }
 
-    public void notifyObjectUpdateListeners() {
+    public void notifyInterpolationUpdateListeners() {
         InterpolationUpdateEvent event = new InterpolationUpdateEvent(this);
         InterpolationUpdateListener[] listeners = listenersList.getListeners(InterpolationUpdateListener.class);
         for (InterpolationUpdateListener listener : listeners) {
@@ -119,6 +146,11 @@ public abstract class Interpolation implements Serializable {
         return Collections.unmodifiableList(coefficients);
     }
 
+    /**
+     * Sets coefficients of the interpolation function.
+     *
+     * @param coefficients coefficients of interpolation function.
+     */
     protected void setCoefficients(double... coefficients) {
         if (!this.coefficients.isEmpty()) {
             this.coefficients.clear();

@@ -27,6 +27,8 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
  * when new points are created in current <code>Interpolation</code> object.
  *
  * @author Kotikov S.G.
+ * @see InterpolationUpdateListener
+ * @see Interpolation
  */
 public class NewPointsPanel extends JPanel implements InterpolationUpdateListener {
     private final NumberFormat numberFormat = NumberFormat.getNumberInstance();

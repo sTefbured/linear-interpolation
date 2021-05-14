@@ -12,6 +12,7 @@ import static java.awt.Image.SCALE_FAST;
  * A <code>SplashScreen</code> is an extended version of <code>JFrame</code>
  * that shown while the <code>MainFrame</code> is creating. Contains
  * information about the project, "Next" and "Exit" buttons.
+ * If no button was pressed for 60 seconds, <code>SplashScreen</code> is closed.
  *
  * @author Kotikov S.G.
  */
@@ -26,7 +27,8 @@ public class SplashScreen extends JFrame {
 
     /**
      * Starts a parallel thread, where <code>MainFrame</code> is being created,
-     * creates visible <code>SplashScreen</code> object and runs timer.
+     * creates visible <code>SplashScreen</code> object and runs 60 seconds timer,
+     * which closes the <code>SplashScreen</code> if no button was pressed.
      */
     public SplashScreen() {
         mainFrameThread = new Thread(() -> mainFrame = new MainFrame());

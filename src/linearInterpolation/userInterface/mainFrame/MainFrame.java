@@ -9,12 +9,11 @@ import linearInterpolation.userInterface.mainFrame.userInput.InputPanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 /**
  * A <code>MainFrame</code> object is an extended version of <code>JFrame</code> that adds
- * panels and menu bar on the frame. Contains <code>Interpolation</code> object as a field.
+ * panels and menu bar on the frame. Used as the main window of the application.
+ * Provides with UI components for performing interpolation operations.
  *
  * @author Kotikov S.G.
  */
@@ -24,20 +23,18 @@ public class MainFrame extends JFrame {
     private static InterpolationChartPanel chartPanel;
 
     /**
-     * Creates frame with menu bar, input panel and chart panel.
+     * Creates frame with menu bar, <code>InputPanel</code> and <code>InterpolationChartPanel</code>.
+     * <code>InputPanel</code> has UI components for operations.
+     * Calculations result is shown on <code>InterpolationChartPanel</code>.
+     *
+     * @see InputPanel
+     * @see InterpolationChartPanel
      */
     public MainFrame() {
         super("Linear interpolation coursework");
         interpolation = new TimeTemperatureInterpolation();
         inputPanel = new InputPanel();
         chartPanel = new InterpolationChartPanel();
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowIconified(WindowEvent e) {
-                super.windowIconified(e);
-                System.out.println("W: " + getWidth() + " H: " + getHeight());
-            }
-        });
         add(inputPanel);
         add(chartPanel);
         setLayout(new GridLayout(1, 2));
@@ -59,7 +56,7 @@ public class MainFrame extends JFrame {
         interpolation.addInterpolationUpdateListener(inputPanel.getInitializingPanel());
         interpolation.addInterpolationUpdateListener(inputPanel.getNewPointsPanel());
         interpolation.addInterpolationUpdateListener(chartPanel);
-        interpolation.notifyObjectUpdateListeners();
+        interpolation.notifyInterpolationUpdateListeners();
     }
 
     /**

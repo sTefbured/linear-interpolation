@@ -12,8 +12,8 @@ import java.io.*;
 
 /**
  * MenuBar is an extension of JMenuBar which contains menu items
- * for saving/loading interpolation data files (.intp) and about section.
- * About section consists of "About author" and "About program" items.
+ * for saving/loading interpolation data files (.intp) and "about" section.
+ * "About" section consists of "About author" and "About program" items.
  * "About" items open "About" dialogs with certain information.
  *
  * @author Kotikov S.G.
@@ -28,7 +28,7 @@ public class MenuBar extends JMenuBar {
     /**
      * Creates <code>MenuBar</code> object with "Load", "Save" and "About"
      * items. Initializes <code>parentFrame</code> which used for centering
-     * dialogs relatively to parent frame.
+     * dialogs relatively to the parent frame.
      *
      * @param parent parent frame of the menu bar.
      */
@@ -51,7 +51,7 @@ public class MenuBar extends JMenuBar {
             }
             File file = fileChooser.getSelectedFile();
 
-            // If file name does not end with correct extension, add it
+            // If file name does not end with correct extension, then add it
             if (!file.getName().endsWith('.' + fileExtension)) {
                 String name = file.getAbsolutePath() + '.' + fileExtension;
                 fileChooser.setSelectedFile(new File(name));
