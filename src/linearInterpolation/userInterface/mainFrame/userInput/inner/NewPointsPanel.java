@@ -104,8 +104,9 @@ public class NewPointsPanel extends JPanel implements InterpolationUpdateListene
         JButton button = new JButton("ОК");
         button.addActionListener(e -> {
             try {
-                double timeValue = Parser.parseField(timeField, numberFormat);
+                double timeValue = Parser.parseDoubleField(timeField, numberFormat);
                 MainFrame.getInterpolation().addPoint(timeValue);
+                timeField.setText("");
             } catch (ParseException parseException) {
                 JOptionPane.showMessageDialog(
                         this,

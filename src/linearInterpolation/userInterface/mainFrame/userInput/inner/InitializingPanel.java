@@ -184,7 +184,6 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
             List<Double> timeStamps = parseFields(timeValuesFields);
             List<Double> temperatures = parseFields(temperatureValuesFields);
             MainFrame.getInterpolation().initialize(timeStamps, temperatures);
-            getParent().repaint();
         } catch (ParseException e) {
             showNumberFormatErrorDialog();
         }
@@ -193,7 +192,7 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
     private List<Double> parseFields(Collection<JTextField> fields) throws ParseException {
         List<Double> values = new ArrayList<>(fields.size());
         for (JTextField f : fields) {
-            values.add(Parser.parseField(f, numberFormat));
+            values.add(Parser.parseDoubleField(f, numberFormat));
         }
         return values;
     }
