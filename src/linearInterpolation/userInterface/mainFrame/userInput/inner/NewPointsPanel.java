@@ -27,9 +27,12 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
  * when new points are created in current <code>Interpolation</code> object.
  *
  * @author Kotikov S.G.
+ * @see InterpolationUpdateListener
+ * @see Interpolation
  */
 public class NewPointsPanel extends JPanel implements InterpolationUpdateListener {
-    private final NumberFormat numberFormat = NumberFormat.getNumberInstance();
+    private static final NumberFormat numberFormat = NumberFormat.getNumberInstance();
+
     private final JFormattedTextField timeField;
     private final JButton addButton;
     private final JButton deleteButton;
@@ -102,8 +105,9 @@ public class NewPointsPanel extends JPanel implements InterpolationUpdateListene
         JButton button = new JButton("ОК");
         button.addActionListener(e -> {
             try {
-                double timeValue = Parser.parseField(timeField, numberFormat);
+                double timeValue = Parser.parseDoubleField(timeField, numberFormat);
                 MainFrame.getInterpolation().addPoint(timeValue);
+                timeField.setValue(null);
             } catch (ParseException parseException) {
                 JOptionPane.showMessageDialog(
                         this,

@@ -8,12 +8,24 @@ import java.net.URL;
 
 import static java.awt.Image.SCALE_FAST;
 
+/**
+ * <code>AboutProgramDialog</code> is an extension of JDialog which contains
+ * information about the program including a picture that partly explains its functioning
+ * and list of operations that program provides with.
+ *
+ * @author Kotikov S.G.
+ */
 public class AboutProgramDialog extends JDialog {
     private static final String TITLE = "О программе";
     private static final String PROGRAM_NAME = "Линейная интерполяция и экстраполяция";
 
     private final GridBagConstraints constraints;
 
+    /**
+     * Creates a dialog with added information and picture on it.
+     *
+     * @param parent parent <code>JFrame</code> of dialog. Used for centering.
+     */
     public AboutProgramDialog(JFrame parent) {
         super(parent, TITLE);
         constraints = new GridBagConstraints();
@@ -24,6 +36,7 @@ public class AboutProgramDialog extends JDialog {
         addInfo();
 
         pack();
+        setModal(true);
         setResizable(false);
         setLocationRelativeTo(parent);
         setVisible(true);
@@ -67,7 +80,7 @@ public class AboutProgramDialog extends JDialog {
                 "2) Добавлять новые точки на график<br>" +
                 "2) Сохранять данные об интерполяции в файл<br>" +
                 "3) Загружать сохраненные данные об интерполяции из файла</html>");
-        infoLabel.setFont(new Font(Font.SERIF, Font.BOLD, 30));
+        infoLabel.setFont(new Font("Arial", Font.BOLD, 25));
         Border border = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
         infoLabel.setBorder(border);
         constraints.gridx = 1;

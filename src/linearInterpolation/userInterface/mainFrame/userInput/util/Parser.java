@@ -18,7 +18,7 @@ public abstract class Parser {
      * @return parsed <code>Double</code> object which fits the <code>format</code>.
      * @throws ParseException if the beginning of the specified string cannot be parsed.
      */
-    public static Double parseField(JTextField field, NumberFormat format) throws ParseException {
+    public static Double parseDoubleField(JTextField field, NumberFormat format) throws ParseException {
         String text = field.getText();
         return format.parse(text).doubleValue();
     }

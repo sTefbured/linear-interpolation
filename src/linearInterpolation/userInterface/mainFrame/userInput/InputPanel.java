@@ -11,6 +11,8 @@ import java.awt.*;
  * that contains <code>InitializingPanel</code> and <code>NewPointsPanel</code> objects.
  *
  * @author Kotikov S.G.
+ * @see InitializingPanel
+ * @see NewPointsPanel
  */
 public class InputPanel extends JPanel {
     private final InitializingPanel initializingPanel;

@@ -13,7 +13,7 @@ public class AboutAuthorDialog extends JDialog {
     /**
      * Creates dialog with information about the author.
      *
-     * @param parent parent frame of the dialog.
+     * @param parent parent frame of the dialog. Used for centering.
      */
     public AboutAuthorDialog(JFrame parent) {
         super(parent);
