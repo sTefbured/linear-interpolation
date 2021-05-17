@@ -31,7 +31,8 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
  * @see Interpolation
  */
 public class NewPointsPanel extends JPanel implements InterpolationUpdateListener {
-    private final NumberFormat numberFormat = NumberFormat.getNumberInstance();
+    private static final NumberFormat numberFormat = NumberFormat.getNumberInstance();
+
     private final JFormattedTextField timeField;
     private final JButton addButton;
     private final JButton deleteButton;
@@ -106,7 +107,7 @@ public class NewPointsPanel extends JPanel implements InterpolationUpdateListene
             try {
                 double timeValue = Parser.parseDoubleField(timeField, numberFormat);
                 MainFrame.getInterpolation().addPoint(timeValue);
-                timeField.setText("");
+                timeField.setValue(null);
             } catch (ParseException parseException) {
                 JOptionPane.showMessageDialog(
                         this,

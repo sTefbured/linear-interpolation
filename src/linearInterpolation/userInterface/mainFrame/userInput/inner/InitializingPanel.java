@@ -39,20 +39,16 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
     private static final int MAX_VALUES_COUNT = 125;
     private static final int defaultValuesCount = 5;
 
-    private final NumberFormat numberFormat;
-    private final NumberFormat intFormat = NumberFormat.getIntegerInstance();
+    private static final NumberFormat numberFormat;
+    private static final NumberFormat intFormat;
 
     private JFormattedTextField valuesCountField;
     private ArrayList<JTextField> timeValuesFields;
     private ArrayList<JTextField> temperatureValuesFields;
     private JPanel valuesPanel;
 
-    /**
-     * Creates panel with UI components for input of
-     * values count, time and temperature values.
-     * Also creates <code>NumberFormat</code> of decimal positive numbers.
-     */
-    public InitializingPanel() {
+    static {
+        // Create a DecimalFormat object with overridden parse() method to avoid negative and null values
         numberFormat = new DecimalFormat() {
             @Override
             public Number parse(String source, ParsePosition parsePosition) {
@@ -65,6 +61,33 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
                 return number;
             }
         };
+
+        // Create a DecimalFormat object with overridden parse() method to avoid null and values lower than 2
+        intFormat = new DecimalFormat() {
+            @Override
+            public Number parse(String text, ParsePosition pos) {
+                Number number = super.parse(text, pos);
+                if (number != null) {
+                    number = number.intValue();
+                }
+                if (number == null || number.intValue() < 2) {
+                    pos.setIndex(text.length());
+                    pos.setErrorIndex(-1);
+                    number = null;
+                }
+                return number;
+            }
+        };
+    }
+
+    /**
+     * Creates panel with UI components for input of
+     * values count, time and temperature values.
+     * Also creates <code>NumberFormat</code> of decimal positive numbers.
+     */
+    public InitializingPanel() {
+        MainFrame.getInterpolation().addInterpolationUpdateListener(this);
+
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createTitledBorder("Начальные данные"));
         add(createCountPanel());

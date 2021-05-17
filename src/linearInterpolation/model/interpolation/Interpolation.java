@@ -10,11 +10,12 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Implementation of an interpolation calculation tool. Calculations are executed in two steps.
+ * Interpolation is a class used for interpolation calculations. Calculations are executed in two steps.
  * The first step is setting initial <b>x</b> and <b>y</b> values by call <code>initialize</code> method.
  * The second step is calling <code>calculateFunctionValue</code> method,
  * which returns <b>y</b> value for given <b>x</b> value.
  * <p>
+ * The class must be extended to specify, which function must be represented.
  *
  * @author Kotikov S.G.
  */
@@ -58,7 +59,8 @@ public abstract class Interpolation implements Serializable {
         xInterpolated.clear();
         yInterpolated.clear();
         initializeCoefficients();
-        notifyInterpolationUpdateListeners();
+        InterpolationUpdateEvent event = new InterpolationUpdateEvent(this);
+        notifyInterpolationUpdateListeners(event);
     }
 
     /**
@@ -74,13 +76,19 @@ public abstract class Interpolation implements Serializable {
      */
     public abstract double calculateFunctionValue(double xValue);
 
+    /**
+     * Adds a new point with interpolated <b>y</b> value.
+     *
+     * @param x <b>x</b> value of the point
+     */
     public void addPoint(double x) {
         if (xInterpolated.contains(x)) {
             return;
         }
         xInterpolated.add(x);
         yInterpolated.add(calculateFunctionValue(x));
-        notifyInterpolationUpdateListeners();
+        InterpolationUpdateEvent event = new InterpolationUpdateEvent(this);
+        notifyInterpolationUpdateListeners(event);
     }
 
     /**
@@ -95,7 +103,8 @@ public abstract class Interpolation implements Serializable {
             xInterpolated.remove(index);
             yInterpolated.remove(index);
         }
-        notifyInterpolationUpdateListeners();
+        InterpolationUpdateEvent event = new InterpolationUpdateEvent(this);
+        notifyInterpolationUpdateListeners(event);
     }
 
     /**
@@ -110,38 +119,65 @@ public abstract class Interpolation implements Serializable {
         listenersList.add(InterpolationUpdateListener.class, listener);
     }
 
-    public void notifyInterpolationUpdateListeners() {
-        InterpolationUpdateEvent event = new InterpolationUpdateEvent(this);
+    /**
+     * Notifies all subscribed <code>InterpolationUpdateListeners</code>
+     * about new <code>InterpolationUpdateEvent</code>.
+     *
+     * @param event new <code>InterpolationUpdateEvent</code>.
+     * @see InterpolationUpdateEvent
+     */
+    public void notifyInterpolationUpdateListeners(InterpolationUpdateEvent event) {
         InterpolationUpdateListener[] listeners = listenersList.getListeners(InterpolationUpdateListener.class);
         for (InterpolationUpdateListener listener : listeners) {
             listener.interpolationUpdated(event);
         }
     }
 
+    /**
+     * @return <b>true</b> if <code>xValues</code> and <code>yValues</code> are not null.
+     */
     public boolean isInitialized() {
         return xValues != null && yValues != null;
     }
 
+    /**
+     * @return <b>true</b> if <code>xValues</code> or <code>yValues</code> is empty.
+     */
     public boolean isEmpty() {
         return xValues.isEmpty() || yValues.isEmpty();
     }
 
+    /**
+     * @return unmodifiable <b>x</b> values list.
+     */
     public List<Double> getXValues() {
         return Collections.unmodifiableList(xValues);
     }
 
+    /**
+     * @return unmodifiable <b>y</b> values list.
+     */
     public List<Double> getYValues() {
         return Collections.unmodifiableList(yValues);
     }
 
+    /**
+     * @return unmodifiable interpolated <b>x</b> values list.
+     */
     public List<Double> getXInterpolated() {
         return Collections.unmodifiableList(xInterpolated);
     }
 
+    /**
+     * @return unmodifiable interpolated <b>y</b> values list.
+     */
     public List<Double> getYInterpolated() {
         return Collections.unmodifiableList(yInterpolated);
     }
 
+    /**
+     * @return unmodifiable list of coefficients.
+     */
     public List<Double> getCoefficients() {
         return Collections.unmodifiableList(coefficients);
     }

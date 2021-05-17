@@ -2,6 +2,7 @@ package linearInterpolation.userInterface.mainFrame;
 
 import linearInterpolation.model.interpolation.Interpolation;
 import linearInterpolation.model.interpolation.TimeTemperatureInterpolation;
+import linearInterpolation.model.interpolation.event.InterpolationUpdateEvent;
 import linearInterpolation.model.interpolation.listener.InterpolationUpdateListener;
 import linearInterpolation.userInterface.mainFrame.chart.InterpolationChartPanel;
 import linearInterpolation.userInterface.mainFrame.menu.MenuBar;
@@ -56,7 +57,8 @@ public class MainFrame extends JFrame {
         interpolation.addInterpolationUpdateListener(inputPanel.getInitializingPanel());
         interpolation.addInterpolationUpdateListener(inputPanel.getNewPointsPanel());
         interpolation.addInterpolationUpdateListener(chartPanel);
-        interpolation.notifyInterpolationUpdateListeners();
+        InterpolationUpdateEvent event = new InterpolationUpdateEvent(interpolation);
+        interpolation.notifyInterpolationUpdateListeners(event);
     }
 
     /**
