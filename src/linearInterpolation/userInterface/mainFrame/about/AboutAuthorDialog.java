@@ -2,6 +2,9 @@ package linearInterpolation.userInterface.mainFrame.about;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URL;
+
+import static java.awt.Image.SCALE_FAST;
 
 /**
  * <code>AboutAuthorDialog</code> is an extension of <code>JDialog</code>
@@ -18,10 +21,20 @@ public class AboutAuthorDialog extends JDialog {
     public AboutAuthorDialog(JFrame parent) {
         super(parent);
         setTitle("Об авторе");
+        ClassLoader loader = getClass().getClassLoader();
+        URL url = loader.getResource("author.jpg");
+        if (url == null) {
+            return;
+        }
+        Image image = new ImageIcon(url).getImage();
+        Image scaledImage = image.getScaledInstance(250, 350, SCALE_FAST);
+        JLabel imageLabel = new JLabel(new ImageIcon(scaledImage));
+
         JPanel textPanel = new JPanel();
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
         setLayout(new BorderLayout());
         JLabel[] textLabels = new JLabel[]{
+                imageLabel,
                 new JLabel("Автор"),
                 new JLabel("студент группы 10702418"),
                 new JLabel("Котиков Степан Георгиевич"),

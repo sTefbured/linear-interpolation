@@ -56,6 +56,7 @@ public class SplashScreen extends JFrame {
         addBodyLabel();
         addImageLabel();
         addInfoLabel();
+        addBottomLabel();
     }
 
     private void addHeadLabel() {
@@ -125,10 +126,17 @@ public class SplashScreen extends JFrame {
         return button;
     }
 
+    private void addBottomLabel() {
+        constraints.gridwidth = 2;
+        constraints.gridx = 0;
+        constraints.gridy = 3;
+
+    }
+
     private void addButtons() {
         constraints.gridwidth = 1;
         constraints.gridx = 0;
-        constraints.gridy = 3;
+        constraints.gridy = 4;
         constraints.weightx = 0.5;
         constraints.ipady = 20;
         constraints.fill = GridBagConstraints.HORIZONTAL;

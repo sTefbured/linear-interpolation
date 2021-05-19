@@ -6,8 +6,6 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.net.URL;
 
-import static java.awt.Image.SCALE_FAST;
-
 /**
  * <code>AboutProgramDialog</code> is an extension of JDialog which contains
  * information about the program including a picture that partly explains its functioning
@@ -34,6 +32,8 @@ public class AboutProgramDialog extends JDialog {
         addProgramName();
         addPicture();
         addInfo();
+        addVersion();
+        addButton();
 
         pack();
         setModal(true);
@@ -44,6 +44,7 @@ public class AboutProgramDialog extends JDialog {
 
     private void addProgramName() {
         JLabel nameLabel = new JLabel(PROGRAM_NAME);
+        nameLabel.setFont(new Font("Arial", Font.BOLD, 20));
         nameLabel.setHorizontalAlignment(JLabel.CENTER);
         Border border = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
         nameLabel.setBorder(border);
@@ -57,19 +58,19 @@ public class AboutProgramDialog extends JDialog {
 
     private void addPicture() {
         ClassLoader loader = getClass().getClassLoader();
-        URL url = loader.getResource("icon.png");
+        URL url = loader.getResource("program.jpg");
         if (url == null) {
             return;
         }
         Image image = new ImageIcon(url).getImage();
-        Image scaledImage = image.getScaledInstance(200, 200, SCALE_FAST);
+        Image scaledImage = image.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
         JLabel imageLabel = new JLabel(new ImageIcon(scaledImage));
         Border border = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
         imageLabel.setBorder(border);
         constraints.gridx = 0;
         constraints.gridy = 1;
         constraints.gridwidth = 1;
-        constraints.gridheight = 1;
+        constraints.gridheight = 3;
         constraints.fill = GridBagConstraints.HORIZONTAL;
         add(imageLabel, constraints);
     }
@@ -80,7 +81,7 @@ public class AboutProgramDialog extends JDialog {
                 "2) Добавлять новые точки на график<br>" +
                 "2) Сохранять данные об интерполяции в файл<br>" +
                 "3) Загружать сохраненные данные об интерполяции из файла</html>");
-        infoLabel.setFont(new Font("Arial", Font.BOLD, 25));
+        infoLabel.setFont(new Font("Arial", Font.BOLD, 18));
         Border border = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
         infoLabel.setBorder(border);
         constraints.gridx = 1;
@@ -89,5 +90,30 @@ public class AboutProgramDialog extends JDialog {
         constraints.gridheight = 1;
         constraints.fill = GridBagConstraints.HORIZONTAL;
         add(infoLabel, constraints);
+    }
+
+    private void addVersion() {
+        JLabel versionLabel = new JLabel("Version 1.0.0.2021");
+        versionLabel.setFont(new Font("Arial", Font.BOLD, 15));
+        versionLabel.setHorizontalAlignment(JLabel.CENTER);
+        Border border = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
+        versionLabel.setBorder(border);
+        constraints.gridx = 1;
+        constraints.gridy = 2;
+        constraints.gridwidth = 1;
+        constraints.gridheight = 1;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        add(versionLabel, constraints);
+    }
+
+    private void addButton() {
+        JButton button = new JButton("Назад");
+        button.addActionListener(e -> dispose());
+        constraints.gridx = 1;
+        constraints.gridy = 3;
+        constraints.gridwidth = 1;
+        constraints.gridheight = 1;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        add(button, constraints);
     }
 }
