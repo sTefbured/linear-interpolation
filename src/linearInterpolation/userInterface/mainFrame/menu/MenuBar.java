@@ -12,22 +12,23 @@ import java.io.*;
 
 /**
  * MenuBar is an extension of JMenuBar which contains menu items
- * for saving/loading interpolation data files (.intp) and about section.
- * About section consists of "About author" and "About program" items.
+ * for saving/loading interpolation data files (.intp) and "about" section.
+ * "About" section consists of "About author" and "About program" items.
  * "About" items open "About" dialogs with certain information.
  *
  * @author Kotikov S.G.
  */
 public class MenuBar extends JMenuBar {
     private final String fileExtension = "intp";
-    private final String fileDescription = "Interpolation data file .intp";
+    private final String fileDescription = "Файл интерполяционных данных .intp";
 
     private final MainFrame parentFrame;
     private final JFileChooser fileChooser;
 
     /**
-     * Creates <code>MenuBar</code> object with "Load", "Save" and "About" items.
-     * Initializes <code>parentFrame</code> which used for centering dialogs relatively to parent frame.
+     * Creates <code>MenuBar</code> object with "Load", "Save" and "About"
+     * items. Initializes <code>parentFrame</code> which used for centering
+     * dialogs relatively to the parent frame.
      *
      * @param parent parent frame of the menu bar.
      */
@@ -50,7 +51,7 @@ public class MenuBar extends JMenuBar {
             }
             File file = fileChooser.getSelectedFile();
 
-            // If file name does not end with correct extension, add it
+            // If file name does not end with correct extension, then add it
             if (!file.getName().endsWith('.' + fileExtension)) {
                 String name = file.getAbsolutePath() + '.' + fileExtension;
                 fileChooser.setSelectedFile(new File(name));
@@ -60,9 +61,9 @@ public class MenuBar extends JMenuBar {
     }
 
     private JMenu createFileMenu() {
-        JMenu fileMenu = new JMenu("File");
-        JMenuItem loadItem = new JMenuItem("Load");
-        JMenuItem saveItem = new JMenuItem("Save");
+        JMenu fileMenu = new JMenu("Файл");
+        JMenuItem loadItem = new JMenuItem("Загрузить");
+        JMenuItem saveItem = new JMenuItem("Сохранить");
         loadItem.addActionListener(e -> loadInterpolation());
         saveItem.addActionListener(e -> saveInterpolation());
         fileMenu.add(loadItem);
@@ -84,9 +85,9 @@ public class MenuBar extends JMenuBar {
         } catch (IOException | ClassNotFoundException exception) {
             JOptionPane.showMessageDialog(
                     parentFrame,
-                    "Error. Wrong file format. Necessary format: "
+                    "Ошибка. Неверный формат файла. Необходимый формат: "
                             + fileDescription,
-                    "Error",
+                    "Ошибка",
                     JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -98,8 +99,8 @@ public class MenuBar extends JMenuBar {
     private void saveInterpolation() {
         if (MainFrame.getInterpolation().isEmpty()) {
             JOptionPane.showMessageDialog(parentFrame,
-                    "You can not save empty interpolation.",
-                    "Error", JOptionPane.ERROR_MESSAGE);
+                    "Невозможно сохранить пустую интерполяцию.",
+                    "Ошибка", JOptionPane.ERROR_MESSAGE);
             return;
         }
         File initialFile = new File("interpolation1." + fileExtension);
@@ -117,16 +118,16 @@ public class MenuBar extends JMenuBar {
         } catch (IOException exception) {
             JOptionPane.showMessageDialog(
                     parentFrame,
-                    "Error. Couldn't save file.",
-                    "Error",
+                    "Ошибка. Не удалось сохранить файл.",
+                    "Ошибка",
                     JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private JMenu createAboutMenu() {
-        JMenu aboutMenu = new JMenu("About");
-        JMenuItem aboutDeveloperItem = new JMenuItem("Developer");
-        JMenuItem aboutProgramItem = new JMenuItem("Program");
+        JMenu aboutMenu = new JMenu("Информация");
+        JMenuItem aboutDeveloperItem = new JMenuItem("Об авторе");
+        JMenuItem aboutProgramItem = new JMenuItem("О программе");
         aboutDeveloperItem.addActionListener(e -> new AboutAuthorDialog(parentFrame));
         aboutProgramItem.addActionListener(e -> new AboutProgramDialog(parentFrame));
         aboutMenu.add(aboutDeveloperItem);

@@ -2,7 +2,8 @@ package linearInterpolation.userInterface.mainFrame;
 
 import linearInterpolation.model.interpolation.Interpolation;
 import linearInterpolation.model.interpolation.TimeTemperatureInterpolation;
-import linearInterpolation.model.listener.InterpolationUpdateListener;
+import linearInterpolation.model.interpolation.event.InterpolationUpdateEvent;
+import linearInterpolation.model.interpolation.listener.InterpolationUpdateListener;
 import linearInterpolation.userInterface.mainFrame.chart.InterpolationChartPanel;
 import linearInterpolation.userInterface.mainFrame.menu.MenuBar;
 import linearInterpolation.userInterface.mainFrame.userInput.InputPanel;
@@ -12,7 +13,8 @@ import java.awt.*;
 
 /**
  * A <code>MainFrame</code> object is an extended version of <code>JFrame</code> that adds
- * panels and menu bar on the frame. Contains <code>Interpolation</code> object as a field.
+ * panels and menu bar on the frame. Used as the main window of the application.
+ * Provides with UI components for performing interpolation operations.
  *
  * @author Kotikov S.G.
  */
@@ -22,7 +24,12 @@ public class MainFrame extends JFrame {
     private static InterpolationChartPanel chartPanel;
 
     /**
-     * Creates frame with menu bar, input panel and chart panel.
+     * Creates frame with menu bar, <code>InputPanel</code> and <code>InterpolationChartPanel</code>.
+     * <code>InputPanel</code> has UI components for operations.
+     * Calculations result is shown on <code>InterpolationChartPanel</code>.
+     *
+     * @see InputPanel
+     * @see InterpolationChartPanel
      */
     public MainFrame() {
         super("Linear interpolation coursework");
@@ -50,7 +57,8 @@ public class MainFrame extends JFrame {
         interpolation.addInterpolationUpdateListener(inputPanel.getInitializingPanel());
         interpolation.addInterpolationUpdateListener(inputPanel.getNewPointsPanel());
         interpolation.addInterpolationUpdateListener(chartPanel);
-        interpolation.notifyObjectUpdateListeners();
+        InterpolationUpdateEvent event = new InterpolationUpdateEvent(interpolation);
+        interpolation.notifyInterpolationUpdateListeners(event);
     }
 
     /**

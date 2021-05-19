@@ -1,8 +1,9 @@
 package linearInterpolation.userInterface.mainFrame.chart;
 
-import linearInterpolation.model.event.InterpolationUpdateEvent;
 import linearInterpolation.model.interpolation.Interpolation;
-import linearInterpolation.model.listener.InterpolationUpdateListener;
+import linearInterpolation.model.interpolation.LinearInterpolation;
+import linearInterpolation.model.interpolation.event.InterpolationUpdateEvent;
+import linearInterpolation.model.interpolation.listener.InterpolationUpdateListener;
 import linearInterpolation.userInterface.mainFrame.MainFrame;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -18,27 +19,36 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseListener;
 import java.awt.geom.Ellipse2D;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EventListener;
-import java.util.Iterator;
 import java.util.List;
+import java.util.*;
 
+/**
+ * <code>InterpolationChartPanel</code> is an extension of JPanel which contains
+ * chart of interpolation function, initial points and added points.
+ * <p>
+ * Implements <code>InterpolationUpdateListener</code> to be able
+ * to be subscribed to an <code>Interpolation</code> object's changes.
+ *
+ * @author Kotikov S.G.
+ */
 public class InterpolationChartPanel extends JPanel implements InterpolationUpdateListener {
-    public final int INTERPOLATED_POINTS_INDEX = 0;
-    public final int INITIAL_POINTS_INDEX = 1;
-    public final int INTERPOLATED_LINE_INDEX = 2;
-    private final String INITIAL_POINTS_KEY = "Initial points";
-    private final String INTERPOLATED_LINE_KEY = "Interpolated line function";
-    private final String INTERPOLATED_POINTS_KEY = "Interpolated points";
+    private static final int INTERPOLATED_POINTS_INDEX = 0;
+    private static final int INITIAL_POINTS_INDEX = 1;
+    private static final int INTERPOLATED_LINE_INDEX = 2;
+    private static final String INITIAL_POINTS_KEY = "Начальные точки";
+    private static final String INTERPOLATED_LINE_KEY = "Функция линейной интерполяции";
+    private static final String INTERPOLATED_POINTS_KEY = "Интерполированные точки";
 
     private final DefaultXYDataset dataset;
     private final XYSeries initialPointsSeries;
     private final XYSeries interpolatedLineSeries;
     private final XYSeries interpolatedPointsSeries;
 
+    /**
+     * Creates and configures panel with <code>ChartPanel</code> on it.
+     * Adds the panel as a listener to current <code>Interpolation</code> object.
+     */
     public InterpolationChartPanel() {
-        MainFrame.getInterpolation().addInterpolationUpdateListener(this);
         dataset = new DefaultXYDataset();
         initialPointsSeries = new XYSeries(INITIAL_POINTS_KEY);
         interpolatedLineSeries = new XYSeries(INTERPOLATED_LINE_KEY);
@@ -52,8 +62,16 @@ public class InterpolationChartPanel extends JPanel implements InterpolationUpda
         }
         setLayout(new GridLayout(1, 1));
         add(panel);
+        MainFrame.getInterpolation().addInterpolationUpdateListener(this);
     }
 
+    /**
+     * Updates chart with new values from <code>Interpolation</code> object.
+     * The method is called when <code>Interpolation</code> object that
+     * panel is subscribed to is changed.
+     *
+     * @param event InterpolationUpdateEvent information
+     */
     @Override
     public void interpolationUpdated(InterpolationUpdateEvent event) {
         removeAllSeries();
@@ -64,8 +82,8 @@ public class InterpolationChartPanel extends JPanel implements InterpolationUpda
     }
 
     private JFreeChart createChart(XYDataset dataset) {
-        JFreeChart chart = ChartFactory.createXYLineChart("Cooling function",
-                "time, hour", "temperature, K", dataset);
+        JFreeChart chart = ChartFactory.createXYLineChart("Функция охлаждения",
+                "время, час", "температура, K", dataset);
         chart.setBackgroundPaint(Color.WHITE);
 
         XYPlot plot = chart.getXYPlot();
@@ -119,14 +137,14 @@ public class InterpolationChartPanel extends JPanel implements InterpolationUpda
     }
 
     private void initializeAllSeries(Interpolation interpolation) {
-        initializeLineSeries(interpolation);
+        initializeLineSeries((LinearInterpolation) interpolation);
         initializePointSeries(initialPointsSeries,
                 interpolation.getXValues(), interpolation.getYValues());
         initializePointSeries(interpolatedPointsSeries,
                 interpolation.getXInterpolated(), interpolation.getYInterpolated());
     }
 
-    private void initializeLineSeries(Interpolation interpolation) {
+    private void initializeLineSeries(LinearInterpolation interpolation) {
         // Find minimum and maximum time value among new and initial time values in interpolation.
         double minTimeValue = Collections.min(interpolation.getXValues());
         double maxTimeValue = Collections.max(interpolation.getXValues());

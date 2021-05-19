@@ -1,8 +1,8 @@
 package linearInterpolation.userInterface.mainFrame.userInput.inner;
 
-import linearInterpolation.model.event.InterpolationUpdateEvent;
 import linearInterpolation.model.interpolation.Interpolation;
-import linearInterpolation.model.listener.InterpolationUpdateListener;
+import linearInterpolation.model.interpolation.event.InterpolationUpdateEvent;
+import linearInterpolation.model.interpolation.listener.InterpolationUpdateListener;
 import linearInterpolation.userInterface.mainFrame.MainFrame;
 import linearInterpolation.userInterface.mainFrame.userInput.util.Parser;
 
@@ -27,7 +27,7 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
  * <p>
  * Implements {@link InterpolationUpdateListener} because it
  * must be notified when current <code>Interpolation</code> object
- * is updated. When being notified, <code>update</code> method
+ * is updated. When being notified, <code>interpolationUpdated</code> method
  * is called, where UI components are being updated.
  *
  * @author Kotikov S.G.
@@ -36,23 +36,19 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
  * @see InterpolationUpdateListener
  */
 public class InitializingPanel extends JPanel implements InterpolationUpdateListener {
-    public final int MAX_VALUES_COUNT = 125;
-    public final int defaultValuesCount = 5;
+    private static final int MAX_VALUES_COUNT = 125;
+    private static final int defaultValuesCount = 5;
 
-    private final NumberFormat numberFormat;
-    private final NumberFormat intFormat = NumberFormat.getIntegerInstance();
+    private static final NumberFormat numberFormat;
+    private static final NumberFormat intFormat;
 
     private JFormattedTextField valuesCountField;
     private ArrayList<JTextField> timeValuesFields;
     private ArrayList<JTextField> temperatureValuesFields;
     private JPanel valuesPanel;
 
-    /**
-     * Creates panel with UI components for input of
-     * values count, time and temperature values.
-     * Also creates <code>NumberFormat</code> of decimal positive numbers.
-     */
-    public InitializingPanel() {
+    static {
+        // Create a DecimalFormat object with overridden parse() method to avoid negative and null values
         numberFormat = new DecimalFormat() {
             @Override
             public Number parse(String source, ParsePosition parsePosition) {
@@ -65,16 +61,44 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
                 return number;
             }
         };
+
+        // Create a DecimalFormat object with overridden parse() method to avoid null and values lower than 2
+        intFormat = new DecimalFormat() {
+            @Override
+            public Number parse(String text, ParsePosition pos) {
+                Number number = super.parse(text, pos);
+                if (number != null) {
+                    number = number.intValue();
+                }
+                if (number == null || number.intValue() < 2) {
+                    pos.setIndex(text.length());
+                    pos.setErrorIndex(-1);
+                    number = null;
+                }
+                return number;
+            }
+        };
+    }
+
+    /**
+     * Creates panel with UI components for input of
+     * values count, time and temperature values.
+     * Also creates <code>NumberFormat</code> of decimal positive numbers.
+     */
+    public InitializingPanel() {
+        MainFrame.getInterpolation().addInterpolationUpdateListener(this);
+
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBorder(BorderFactory.createTitledBorder("Initial values"));
+        setBorder(BorderFactory.createTitledBorder("Начальные данные"));
         add(createCountPanel());
         valuesPanel = createValuesPanel(defaultValuesCount);
         add(valuesPanel);
     }
 
     /**
-     * Updates count of fields on <code>valuesPanel</code>
-     * The method is being called when current <code>Interpolation</code> is changed.
+     * Updates count of fields on <code>valuesPanel</code>.
+     * The method is called when the <code>Interpolation</code> that the panel
+     * is subscribed to is changed.
      *
      * @param event <code>InterpolationUpdateEvent</code> parameters.
      */
@@ -100,7 +124,7 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
     private JPanel createCountPanel() {
         JPanel countPanel = new JPanel(new FlowLayout());
         valuesCountField = new JFormattedTextField(intFormat);
-        JButton setButton = new JButton("Set values count");
+        JButton setButton = new JButton("Задать число точек");
 
         valuesCountField.setValue(defaultValuesCount);
         valuesCountField.setColumns(5);
@@ -143,8 +167,7 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
                 VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(200, 300));
 
-
-        JButton initializeButton = new JButton("Initialize");
+        JButton initializeButton = new JButton("Задать начальные точки");
         initializeButton.addActionListener(e -> initializeInterpolation());
         valuesPanel.add(scrollPane, BorderLayout.CENTER);
         valuesPanel.add(initializeButton, BorderLayout.SOUTH);
@@ -155,8 +178,8 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
         JPanel fieldsPanel = new JPanel(new GridLayout(valuesCount + 1, 2));
         JPanel timeLabelPanel = new JPanel();
         JPanel temperatureLabelPanel = new JPanel();
-        timeLabelPanel.add(new JLabel("Time"));
-        temperatureLabelPanel.add(new JLabel("Temperature"));
+        timeLabelPanel.add(new JLabel("Время, час"));
+        temperatureLabelPanel.add(new JLabel("Температура, К"));
         fieldsPanel.add(timeLabelPanel);
         fieldsPanel.add(temperatureLabelPanel);
         timeValuesFields = new ArrayList<>(valuesCount);
@@ -184,7 +207,6 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
             List<Double> timeStamps = parseFields(timeValuesFields);
             List<Double> temperatures = parseFields(temperatureValuesFields);
             MainFrame.getInterpolation().initialize(timeStamps, temperatures);
-            getParent().repaint();
         } catch (ParseException e) {
             showNumberFormatErrorDialog();
         }
@@ -193,7 +215,7 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
     private List<Double> parseFields(Collection<JTextField> fields) throws ParseException {
         List<Double> values = new ArrayList<>(fields.size());
         for (JTextField f : fields) {
-            values.add(Parser.parseField(f, numberFormat));
+            values.add(Parser.parseDoubleField(f, numberFormat));
         }
         return values;
     }
@@ -201,8 +223,8 @@ public class InitializingPanel extends JPanel implements InterpolationUpdateList
     private void showNumberFormatErrorDialog() {
         JOptionPane.showMessageDialog(
                 this,
-                "Error. Wrong number format.",
-                "Error",
+                "Ошибка. Неверный числовой формат.",
+                "Ошибка",
                 JOptionPane.ERROR_MESSAGE);
     }
 }
