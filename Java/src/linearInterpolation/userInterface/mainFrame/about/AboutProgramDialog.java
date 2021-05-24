@@ -80,7 +80,7 @@ public class AboutProgramDialog extends JDialog {
                 "1) Получать график интерполяционной прямой<br>" +
                 "2) Добавлять новые точки на график<br>" +
                 "2) Сохранять данные об интерполяции в файл<br>" +
-                "3) Загружать сохраненные данные об интерполяции из файла</html>");
+                "3) Загружать сохраненные данные <br>об интерполяции из файла</html>");
         infoLabel.setFont(new Font("Arial", Font.BOLD, 18));
         Border border = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
         infoLabel.setBorder(border);
