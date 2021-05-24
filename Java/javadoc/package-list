@@ -1,0 +1,12 @@
+linearInterpolation
+linearInterpolation.model.interpolation
+linearInterpolation.model.interpolation.event
+linearInterpolation.model.interpolation.listener
+linearInterpolation.userInterface.mainFrame
+linearInterpolation.userInterface.mainFrame.about
+linearInterpolation.userInterface.mainFrame.chart
+linearInterpolation.userInterface.mainFrame.menu
+linearInterpolation.userInterface.mainFrame.userInput
+linearInterpolation.userInterface.mainFrame.userInput.inner
+linearInterpolation.userInterface.mainFrame.userInput.util
+linearInterpolation.userInterface.splashScreen

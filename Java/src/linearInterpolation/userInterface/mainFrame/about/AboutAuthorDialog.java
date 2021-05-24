@@ -21,18 +21,8 @@ public class AboutAuthorDialog extends JDialog {
     public AboutAuthorDialog(JFrame parent) {
         super(parent);
         setTitle("Об авторе");
-        ClassLoader loader = getClass().getClassLoader();
-        URL url = loader.getResource("author.jpg");
-        if (url == null) {
-            return;
-        }
-        Image image = new ImageIcon(url).getImage();
-        Image scaledImage = image.getScaledInstance(250, 350, SCALE_FAST);
-        JLabel imageLabel = new JLabel(new ImageIcon(scaledImage));
+        JLabel imageLabel = createImageLabel();
 
-        JPanel textPanel = new JPanel();
-        textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
-        setLayout(new BorderLayout());
         JLabel[] textLabels = new JLabel[]{
                 imageLabel,
                 new JLabel("Автор"),
@@ -40,6 +30,9 @@ public class AboutAuthorDialog extends JDialog {
                 new JLabel("Котиков Степан Георгиевич"),
                 new JLabel("kotikov.stepan918@gmail.com")
         };
+        JPanel textPanel = new JPanel();
+        textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
+        setLayout(new BorderLayout());
         Font font = new Font(Font.DIALOG, Font.BOLD, 16);
         for (JLabel label : textLabels) {
             label.setFont(font);
@@ -53,6 +46,18 @@ public class AboutAuthorDialog extends JDialog {
         pack();
         setResizable(false);
         setLocationRelativeTo(parent);
+        setModal(true);
         setVisible(true);
+    }
+
+    private JLabel createImageLabel() {
+        ClassLoader loader = getClass().getClassLoader();
+        URL url = loader.getResource("author.jpg");
+        if (url == null) {
+            return new JLabel("Не удалось загрузить фото");
+        }
+        Image image = new ImageIcon(url).getImage();
+        Image scaledImage = image.getScaledInstance(250, 350, SCALE_FAST);
+        return new JLabel(new ImageIcon(scaledImage));
     }
 }
